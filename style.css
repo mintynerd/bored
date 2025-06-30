@@ -1,0 +1,131 @@
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  min-width: 100vw;
+  background: #181f2a; /* Very dark blue for body */
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  width: 100%;
+  background: #0d1a36; /* Dark blue */
+  padding: 32px 0 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative; /* Needed for absolute positioning of the image */
+}
+
+.header-logo {
+  position: absolute;
+  top: 16px;
+  left: 32px;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+  width: 100%;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Footer */
+.footer {
+  width: 100%;
+  background: #0d1a36; /* Dark blue */
+  color: #fff;
+  padding: 32px 0 32px 0;
+  display: flex;
+  align-items: center;
+  position: relative;
+  min-height: 110px;
+  box-sizing: border-box;
+}
+
+.footer-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-left: 32px;
+  margin-right: 40px;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  font-size: 1.1em;
+}
+
+.footer-links a {
+  color: #00bcd4;
+  text-decoration: none;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* Title and subtitle */
+h1 {
+  font-size: 48px;
+  margin: 0 0 10px 0;
+  color: #fff;
+  text-shadow: 2px 2px 8px #000;
+}
+p {
+  font-size: 20px;
+  color: #d3d3d3;
+  text-shadow: 1px 1px 6px #000;
+  margin: 0 0 20px 0;
+}
+
+/* Moving link */
+.moving-link {
+  display: inline-block;
+  color: #00bcd4;
+  font-weight: bold;
+  font-size: 1.2em;
+  text-decoration: none;
+  animation: moveLeft 10s linear infinite;
+  white-space: nowrap;
+  text-shadow: 2px 2px 8px #000;
+}
+
+@keyframes moveLeft {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.moving-container {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.placeholder-text {
+  font-size: 2em;
+  color: #888;
+}

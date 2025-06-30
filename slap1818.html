@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Slap 1818</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .scoreboard {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 10px;
+      font-size: 1.2em;
+    }
+    .timer {
+      text-align: center;
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+    .slap-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 30px 0;
+    }
+    .guy {
+      width: 120px;
+      height: 180px;
+      background: none;
+      border: none;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-left: 40px;
+      transition: transform 0.1s;
+    }
+    .guy.slap {
+      transform: translateX(30px) rotate(-10deg) scale(1.05);
+    }
+    .shirt-label {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1818ff;
+      color: #fff;
+      padding: 4px 16px;
+      border-radius: 8px;
+      font-size: 1em;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+    .hand {
+      width: 80px;
+      height: 80px;
+      background: none;
+      margin-right: 40px;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .hand.slap {
+      transform: rotate(-30deg) translateY(10px) scale(1.1);
+    }
+    #slap-btn {
+      margin: 20px auto 0 auto;
+      display: block;
+      font-size: 1.2em;
+      padding: 10px 30px;
+      border-radius: 8px;
+      border: none;
+      background: #00bcd4;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #slap-btn:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Slap 1818</h1>
+    <p>How many times can you slap Kingdom 1818?</p>
+  </div>
+  <div class="main-content">
+    <div class="scoreboard">
+      <div>Most Recent: <span id="recent-score">0</span></div>
+      <div>High Score: <span id="high-score">0</span></div>
+    </div>
+    <div class="timer">
+      Time Left: <span id="timer">60</span>s
+    </div>
+    <div class="slap-area">
+      <img src="hand.png" alt="Hand" class="hand" id="hand-img" />
+      <div class="guy" id="guy">
+        <img src="raw.png" alt="1818 Guy" style="width: 120px; height: 180px; display: block;" />
+        <span class="shirt-label">1818</span>
+      </div>
+    </div>
+    <div id="video-overlay-container" style="display:none; position:relative; width:320px; margin:0 auto;">
+      <video id="slap-video" width="320" height="240">
+        <source src="arvix.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <div id="arvix-overlay" style="position:absolute; top:30%; left:0; width:100%; text-align:center; color:#fff; font-size:2em; font-weight:bold; text-shadow:2px 2px 8px #000;">
+        arvix
+      </div>
+    </div>
+    <button id="slap-btn">Slap 1818!</button>
+    <p id="slap-count">Slaps: 0</p>
+  </div>
+  <div class="footer">
+    <img src="1093galaxy.gif" alt="1093 Galaxy" class="footer-logo" />
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="kvkhistory.html">KvK History</a>
+      <a href="contentcreators.html">Content Creators</a>
+      <a href="kvkhighlights.html">KvK Highlights</a>
+      <a href="https://discord.gg/invite/1093apply" target="_blank">Migration Discord</a>
+      <a href="https://forms.gle/your-application-link" target="_blank">Application Link</a>
+    </div>
+  </div>
+  <audio id="slap-audio" src="slap.mp3.mp3" preload="auto"></audio>
+  <script>
+    let count = 0;
+    let timer = 60;
+    let interval = null;
+    let gameActive = false;
+
+    const btn = document.getElementById('slap-btn');
+    const display = document.getElementById('slap-count');
+    const timerDisplay = document.getElementById('timer');
+    const recentScore = document.getElementById('recent-score');
+    const highScore = document.getElementById('high-score');
+    const guy = document.getElementById('guy');
+    const hand = document.getElementById('hand-img');
+    const slapAudio = document.getElementById('slap-audio');
+    const slapVideo = document.getElementById('slap-video');
+    const videoOverlayContainer = document.getElementById('video-overlay-container');
+    const arvixOverlay = document.getElementById('arvix-overlay');
+
+    let slapCooldown = false;
+    let cooldownInterval = null;
+
+    // Load high score from localStorage
+    let high = localStorage.getItem('slap1818-highscore') || 0;
+    highScore.textContent = high;
+
+    function startGame() {
+      count = 0;
+      timer = 60;
+      display.textContent = `Slaps: ${count}`;
+      timerDisplay.textContent = timer;
+      btn.disabled = false;
+      gameActive = true;
+      interval = setInterval(() => {
+        timer--;
+        timerDisplay.textContent = timer;
+        if (timer <= 0) {
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function endGame() {
+      clearInterval(interval);
+      btn.disabled = true;
+      gameActive = false;
+      recentScore.textContent = count;
+      if (count > high) {
+        high = count;
+        highScore.textContent = high;
+        localStorage.setItem('slap1818-highscore', high);
+      } else {
+        highScore.textContent = high;
+      }
+    }
+
+    btn.addEventListener('click', () => {
+      if (!gameActive) {
+        startGame();
+      }
+      if (slapCooldown) return;
+
+      count++;
+      display.textContent = `Slaps: ${count}`;
+      guy.classList.add('slap');
+      hand.classList.add('slap');
+      slapAudio.currentTime = 0;
+      slapAudio.play();
+
+      // Play arvix.mp4 audio only (video hidden)
+      slapVideo.currentTime = 0;
+      slapVideo.muted = false;
+      slapVideo.volume = 1;
+      slapVideo.play();
+      videoOverlayContainer.style.display = 'none'; // Ensure video is hidden
+
+      setTimeout(() => {
+        guy.classList.remove('slap');
+        hand.classList.remove('slap');
+      }, 120);
+
+      // Start 50ms cooldown
+      slapCooldown = true;
+      let cooldown = 50;
+      btn.disabled = true;
+      btn.textContent = `Cooldown: ${cooldown} ms`;
+      cooldownInterval = setInterval(() => {
+        cooldown -= 10;
+        if (cooldown > 0) {
+          btn.textContent = `Cooldown: ${cooldown} ms`;
+        } else {
+          clearInterval(cooldownInterval);
+          btn.disabled = false;
+          btn.textContent = "Slap 1818!";
+          slapCooldown = false;
+        }
+      }, 10);
+    });
+
+    // Reset game if user clicks button after game ends
+    btn.addEventListener('click', () => {
+      if (!gameActive && timer === 0) {
+        startGame();
+      }
+    });
+
+    // Initialize
+    display.textContent = `Slaps: 0`;
+    recentScore.textContent = 0;
+  </script>
+</body>
+</html>
