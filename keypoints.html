@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Key Swarming Points - Ultimate Swarming Guide</title>
+<link rel="stylesheet" href="main.css">
+<style>
+:root{
+  --bg:#050b11;
+  --bg-accent:radial-gradient(circle at 70% 20%,rgba(33,118,255,.18),transparent 55%),
+               radial-gradient(circle at 20% 80%,rgba(255,200,40,.15),transparent 60%),
+               linear-gradient(140deg,#081520,#0d1d2b 55%,#0b1622);
+  --panel:rgba(16,30,44,.85);
+  --panel-border:rgba(255,255,255,.08);
+  --panel-glow:0 8px 28px -10px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.05);
+  --text:#ecf4ff;
+  --muted:#90a9c4;
+  --accent:#3fbff8;
+  --accent-alt:#ffd54a;
+  --accent-warm:#ffd54a;
+  --danger:#ff714d;
+  --radius:22px;
+  --focus-ring:0 0 0 3px rgba(63,191,248,.45);
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;min-height:100%;background:var(--bg);background-image:var(--bg-accent);color:var(--text);-webkit-font-smoothing:antialiased;}
+/* Password overlay unified styling */
+#password-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(5,11,17,.92);backdrop-filter:blur(14px) saturate(150%);z-index:9999;}
+#password-form{background:linear-gradient(155deg,#132331,#101d29);border:1px solid var(--panel-border);box-shadow:var(--panel-glow);border-radius:26px;padding:50px 48px;display:flex;flex-direction:column;align-items:stretch;min-width:340px;}
+#password-form label{color:var(--accent-warm);font-weight:600;font-size:1rem;margin:0 0 12px;text-align:center;}
+#password-form input{background:#172b3a;border:1px solid rgba(255,255,255,.15);color:var(--text);padding:.85rem 1rem;font-size:.95rem;border-radius:12px;outline:none;margin:0 0 14px;font-family:inherit;transition:.25s;}
+#password-form input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(63,191,248,.35);}
+#password-form button{background:linear-gradient(90deg,var(--accent),#1f8cc1);color:#fff;border:0;font-weight:600;letter-spacing:.5px;font-size:.95rem;padding:.85rem 1.4rem;border-radius:14px;cursor:pointer;transition:.25s;}
+#password-form button:hover{filter:brightness(1.08);} 
+#password-error{color:var(--danger);font-size:.75rem;letter-spacing:.5px;text-align:center;display:none;}
+
+h1,h2{font-weight:700;letter-spacing:.5px;line-height:1.15;margin:0;}
+p{line-height:1.5;margin:0 0 1rem;}
+a{color:var(--accent);text-decoration:none;}
+a:hover{color:var(--accent-alt);} 
+
+header{
+  padding:54px 18px 34px;
+  text-align:center;
+  position:relative;
+}
+header h1{
+  font-size:clamp(34px,4vw,56px);
+  background:linear-gradient(90deg,#3fbff8,#ffd54a 60%,#ff9f4d);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  filter:drop-shadow(0 4px 18px rgba(63,191,248,.25));
+}
+header p{margin:18px auto 0;max-width:780px;font-size:1.0rem;color:var(--muted);}
+
+/* Unified nav pill bar (replaces .top-links) */
+nav.site-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:10px 0 0;padding:0;}
+nav.site-nav a{text-decoration:none;background:rgba(255,255,255,.05);color:var(--muted);padding:8px 18px 9px;font-size:.75rem;font-weight:600;border:1px solid var(--panel-border);border-radius:11px;transition:.22s;letter-spacing:.4px;}
+nav.site-nav a:hover{background:rgba(255,255,255,.12);color:var(--text);} 
+nav.site-nav a.active{background:linear-gradient(145deg,#ffd54a,#ff9f2d);color:#1d1500;border-color:#ffd54a;box-shadow:0 4px 14px -4px rgba(255,185,40,.55);} 
+
+/* Remove old .top-links (kept for backward compatibility but hidden) */
+.top-links{display:none !important;}
+
+main{max-width:1250px;margin:0 auto 100px;padding:0 42px 60px;}
+
+.tabs{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:14px;
+  margin:10px auto 40px;
+}
+.tabs button{
+  appearance:none;
+  border:1px solid var(--panel-border);
+  background:linear-gradient(145deg,#142231,#0e1823);
+  color:var(--muted);
+  padding:.85rem 1.35rem;
+  font-size:.9rem;
+  font-weight:600;
+  letter-spacing:.4px;
+  border-radius:16px;
+  cursor:pointer;
+  position:relative;
+  transition:.25s;
+  box-shadow:0 2px 6px rgba(0,0,0,.4);
+}
+.tabs button:hover{color:var(--text);background:linear-gradient(145deg,#182b3d,#122230);}
+.tabs button.active{
+  background:linear-gradient(145deg,#ffd54a,#ff9f2d);
+  color:#1d1300;
+  border-color:#ffcd2d;
+  box-shadow:0 6px 22px -6px rgba(255,180,40,.55);
+  transform:translateY(-2px);
+}
+
+.panel{
+  background:var(--panel);
+  backdrop-filter:blur(14px) saturate(130%);
+  border:1px solid var(--panel-border);
+  border-radius:var(--radius);
+  padding:46px clamp(22px,4vw,60px) 52px;
+  box-shadow:var(--panel-glow);
+  position:relative;
+  overflow:hidden;
+}
+.panel::before{
+  content:"";
+  position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 35% 15%,rgba(63,191,248,.16),transparent 60%),
+    radial-gradient(circle at 80% 85%,rgba(255,213,74,.18),transparent 65%);
+  pointer-events:none;
+}
+
+.panel h2{
+  font-size:1.9rem;
+  margin:0 0 30px;
+  text-align:center;
+  background:linear-gradient(90deg,#3fbff8,#ffd54a);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
+.list{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:grid;
+  gap:18px;
+  max-width:680px;
+  margin-inline:auto;
+}
+.list li{
+  background:linear-gradient(135deg,#162633,#10202c);
+  border:1px solid rgba(255,255,255,.07);
+  padding:18px 20px 18px 56px;
+  position:relative;
+  border-radius:18px;
+  font-size:.95rem;
+  line-height:1.45;
+  font-weight:500;
+  color:var(--muted);
+  transition:.22s;
+}
+.list li:hover{background:linear-gradient(135deg,#1b3040,#132633);color:var(--text);}
+.list li::before{
+  content:"";
+  position:absolute;
+  left:18px;top:50%;transform:translateY(-50%);
+  width:26px;height:26px;
+  border-radius:8px;
+  background:linear-gradient(140deg,#3fbff8,#1f8cc1);
+  box-shadow:0 0 0 3px rgba(63,191,248,.25),0 4px 10px -3px rgba(0,0,0,.6);
+}
+.list li strong{color:var(--accent-alt);font-weight:600;}
+
+.note{
+  background:linear-gradient(145deg,#1d2f3c,#182633);
+  border:1px solid rgba(255,255,255,.08);
+  padding:18px 22px;
+  border-radius:16px;
+  font-size:.8rem;
+  letter-spacing:.4px;
+  color:var(--muted);
+  margin:36px auto 10px;
+  max-width:780px;
+}
+
+@media (max-width:680px){
+  header{padding:46px 14px 30px;}
+  .panel{padding:38px 24px 48px;}
+  .tabs{gap:10px;}
+  .tabs button{padding:.7rem 1.05rem;font-size:.78rem;border-radius:14px;}
+  nav.site-nav a{font-size:.68rem;padding:7px 14px 8px;}
+}
+</style>
+<!-- Alternate title name ideas:
+  Swarm Ops Primer (chosen)
+  Pre‑Swarm Essentials
+  Swarming Fundamentals Hub
+-->
+</head>
+<body>
+
+<!-- Updated unified password overlay -->
+<div id="password-overlay">
+  <form id="password-form" autocomplete="off">
+    <label for="password">Enter Access Code</label>
+    <input id="password" type="password" placeholder="Password" autofocus>
+    <button type="submit">Unlock</button>
+    <div id="password-error">Incorrect password. Try again.</div>
+  </form>
+</div>
+
+<header>
+  <h1>Key Swarming Points</h1>
+  <nav class="site-nav">
+    <a href="starters.html">Starters</a>
+    <a href="gear.html">Gear</a>
+    <a href="commanders.html">Commanders</a>
+    <a href="keypoints.html" class="active">Key Points</a>
+    <a href="warleading.html">Warleading</a>
+    <a href="defense.html">Defense</a>
+    <a href="credits.html">Credits</a>
+  </nav>
+  <p>Core operational knowledge and high‑impact reminders to elevate your swarming efficiency.</p>
+</header>
+
+<main>
+  <div class="tabs" id="tabs" role="tablist" aria-label="Key points tabs">
+    <button data-tab="calls" class="active" role="tab" aria-selected="true" aria-controls="content">Common Calls</button>
+    <button data-tab="tips" role="tab" aria-selected="false" aria-controls="content">Execution Tips</button>
+    <button data-tab="crystal" role="tab" aria-selected="false" aria-controls="content">Crystal Tech Shift</button>
+    <button data-tab="fieldVS" role="tab" aria-selected="false" aria-controls="content">Field vs Swarm</button>
+    <button data-tab="beli" role="tab" aria-selected="false" aria-controls="content">Beli Impact</button>
+  </div>
+
+  <div id="content" class="panel fade-in">
+    <!-- Filled by JS -->
+  </div>
+
+  <div class="note">
+    Need deeper commander / gear specifics? Jump to
+    <a href="commanders.html">Commanders</a> or <a href="gear.html">Gear</a>.
+  </div>
+</main>
+
+<script>
+/* ===== Password (unified localStorage gate) ===== */
+const ACCESS_KEY='swarmGuideAccess';
+const PASSWORD='SeifStinks123';
+const overlay=document.getElementById('password-overlay');
+const form=document.getElementById('password-form');
+const pwInput=document.getElementById('password');
+const errorMsg=document.getElementById('password-error');
+let attempts=0;
+
+if(localStorage.getItem(ACCESS_KEY)==='true'){
+  overlay.style.display='none';
+}
+
+form.addEventListener('submit',e=>{
+  e.preventDefault();
+  if(pwInput.value===PASSWORD){
+    overlay.style.display='none';
+    localStorage.setItem(ACCESS_KEY,'true');
+  }else{
+    attempts++;
+    errorMsg.style.display='block';
+    pwInput.value='';
+    pwInput.focus();
+    if(attempts>=10){
+      overlay.innerHTML='<div style="color:#fff;font-size:2rem;font-weight:600;text-align:center;">Access denied.</div>';
+    }
+  }
+});
+
+/* ===== Tab Content ===== */
+const content=document.getElementById('content');
+const tabs=document.getElementById('tabs');
+
+const views={
+  calls:`
+    <h2>Common Calls</h2>
+    <ul class="list">
+      <li><strong>Swarm best march</strong> – Swarm with your strongest march.</li>
+      <li><strong>Preswarm</strong> – Swarm before the rally hits (wait for call on voice).</li>
+      <li><strong>Bring debuffing marches</strong> – Bring <a href="commanders.html#commander-content">niche commanders</a>.</li>
+      <li><strong>Recall at yellow</strong> – Stop swarming flag when your march falls below 300k.</li>
+    </ul>`,
+  tips:`
+    <h2>Execution Tips</h2>
+    <ul class="list">
+      <li>Only swarm if your march is above 400k troops (reinforce the rally then refresh your march when it is lower).</li>
+      <li>Recall and refresh your march once it goes below 300k.</li>
+      <li>If you are circling or cant swarm use attack march to kill reinforcements instead.</li>
+      <li>Only listen to warlead calls on when to start or stop swarming.</li>
+    </ul>`,
+  crystal:`
+    <h2>Crystal Tech Shift</h2>
+    <ul class="list">
+      <li>New tech reduces attack and all damage stats, making defending easier.</li>
+      <li>More optimal pairings are required now to ensure you take minimal losses & deal maximum damage.</li>
+      <li>Flags live longer, so to reduce time to kill you need to swarm harder.</li>
+      <li><strong>Takeaway</strong> – Use optimal pairings as much as possible to counter recent tech changes.</li>
+    </ul>`,
+  fieldVS:`
+    <h2>Field vs Swarm Marches</h2>
+    <ul class="list">
+      <li><strong>Dedicated Swarm Marches</strong> – Live longer, apply needed debuffs to the flag, and do more damage.</li>
+      <li><strong>Field March Swarming</strong> – Often trades 70–90% or worse (bad efficiency).</li>
+    </ul>`,
+  beli:`
+    <h2>Beli Impact</h2>
+    <ul class="list">
+      <li>Beli's expertise makes the garrison take more damage (aim for 100% uptime) — free value for all swarmers.</li>
+      <li>Use as many Belis as possible to avoid downtime when one pulls off.</li>
+      <li>If you don’t have Beli, <strong>Justinian</strong> is a very strong high damage option (which you should have if you're swarming with 2 cav wedge anyway).</li>
+    </ul>`
+};
+
+function applyAria(key){
+  tabs.querySelectorAll('button[role="tab"]').forEach(b=>{
+    const active=b.dataset.tab===key;
+    b.classList.toggle('active',active);
+    b.setAttribute('aria-selected', active? 'true':'false');
+  });
+}
+
+function setView(key, {updateHash=true}={}){
+  if(!views[key]) return;
+  content.classList.remove('fade-in');
+  void content.offsetWidth;
+  content.innerHTML=views[key];
+  content.classList.add('fade-in');
+  applyAria(key);
+  if(updateHash){
+    try{ history.replaceState(null,'','#'+key); }catch(e){}
+  }
+}
+
+function applyHash(){
+  const hash=(location.hash||'').replace('#','');
+  const key=views[hash]? hash : 'calls';
+  setView(key, {updateHash:false});
+}
+
+tabs.addEventListener('click',e=>{
+  const btn=e.target.closest('button[data-tab]');
+  if(!btn) return;
+  setView(btn.dataset.tab);
+});
+
+// Keyboard activation (Enter/Space)
+tabs.addEventListener('keydown',e=>{
+  if(e.key!=='Enter' && e.key!==' ') return;
+  const btn=e.target.closest('button[data-tab]');
+  if(!btn) return;
+  e.preventDefault();
+  setView(btn.dataset.tab);
+});
+
+window.addEventListener('hashchange', applyHash);
+
+applyHash();
+</script>
+</body>
+</html>
+``` 

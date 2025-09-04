@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gear for Swarming - Ultimate Swarming Guide</title>
+    <link rel="stylesheet" href="main.css">
+    <style>
+      :root{
+        --bg:#050b11;
+        --bg-accent:radial-gradient(circle at 70% 20%,rgba(33,118,255,.18),transparent 55%),
+                     radial-gradient(circle at 18% 84%,rgba(255,213,74,.14),transparent 60%),
+                     linear-gradient(140deg,#081520,#0d1d2b 55%,#0b1622);
+        --panel:rgba(16,30,44,.82);
+        --panel-border:rgba(255,255,255,.08);
+        --panel-glow:0 10px 34px -12px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.04);
+        --text:#ecf4ff;
+        --muted:#8ea5bd;
+        --accent:#3fbff8;
+        --accent-warm:#ffd54a;
+        --danger:#ff6b5c;
+        font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+      }
+      body{margin:0;background:var(--bg);background-image:var(--bg-accent);color:var(--text);-webkit-font-smoothing:antialiased;display:block;}
+      header{padding:54px 18px 36px;text-align:center;}
+      header h1{margin:0 0 10px;font-size:clamp(38px,4.2vw,60px);font-weight:700;background:linear-gradient(90deg,var(--accent),var(--accent-warm) 65%,#ff9f4d);-webkit-background-clip:text;color:transparent;filter:drop-shadow(0 4px 18px rgba(63,191,248,.25));letter-spacing:.5px;}
+      header p{margin:0 0 24px;font-size:.95rem;color:var(--muted);}
+      nav.site-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:0 0 4px;padding:0;}
+      nav.site-nav a{text-decoration:none;background:rgba(255,255,255,.05);color:var(--muted);padding:8px 18px 9px;font-size:.75rem;font-weight:600;border:1px solid var(--panel-border);border-radius:11px;transition:.22s;letter-spacing:.4px;}
+      nav.site-nav a:hover{background:rgba(255,255,255,.12);color:var(--text);} 
+      nav.site-nav a.active{background:linear-gradient(145deg,#ffd54a,#ff9f2d);color:#1d1500;border-color:#ffd54a;box-shadow:0 4px 14px -4px rgba(255,185,40,.55);}
+      main{max-width:1300px;margin:0 auto 80px;padding:0 clamp(20px,4vw,60px);} /* override main.css */
+      .gear-shell{max-width:1150px;margin:0 auto;background:var(--panel);backdrop-filter:blur(16px) saturate(140%);border:1px solid var(--panel-border);border-radius:34px;padding:50px clamp(24px,4vw,70px) 60px;box-shadow:var(--panel-glow);position:relative;overflow:hidden;}
+      .gear-shell::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 18%,rgba(63,191,248,.18),transparent 65%),radial-gradient(circle at 82% 82%,rgba(255,213,74,.16),transparent 65%);pointer-events:none;}
+      .gear-shell h2{text-align:center;margin:0 0 40px;font-size:1.9rem;background:linear-gradient(90deg,var(--accent),var(--accent-warm));-webkit-background-clip:text;color:transparent;letter-spacing:.6px;}
+      .gear-tabs{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;margin:0 0 36px;}
+      .gear-tab{background:linear-gradient(145deg,#142231,#0e1823);border:1px solid var(--panel-border);padding:1.1rem 1.6rem;border-radius:18px;cursor:pointer;min-width:200px;text-align:center;transition:.25s;box-shadow:0 4px 14px -6px rgba(0,0,0,.6);}
+      .gear-tab:hover{background:linear-gradient(145deg,#1d3346,#132434);} 
+      .gear-tab h3{margin:0;font-size:.95rem;letter-spacing:.5px;font-weight:700;}
+      .gear-tab[data-type="god"] h3{color:#ffd54a;}
+      .gear-tab[data-type="avg"] h3{color:#fff;}
+      .gear-tab[data-type="min"] h3{color:#7ad;}
+      .gear-tab[data-type="feed"] h3{color:#ff714d;}
+      .gear-tab[data-type="explain"] h3{color:#fff;}
+      #gear-content{max-width:880px;margin:0 auto;font-size:.95rem;line-height:1.5;}
+      #gear-content h3{margin:0 0 16px;font-size:1.15rem;letter-spacing:.4px;color:var(--accent-warm);} 
+      #gear-content ul{margin:0 0 1rem;padding-left:1.1rem;color:var(--muted);} 
+      #gear-content li{margin:.4rem 0;}
+      #gear-content button{font-family:inherit;}
+      /* Password overlay styling */
+      #password-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(5,11,17,.94);backdrop-filter:blur(14px) saturate(150%);z-index:9999;}
+      #password-form{background:linear-gradient(155deg,#132331,#101d29);border:1px solid var(--panel-border);box-shadow:var(--panel-glow);border-radius:26px;padding:50px 48px;display:flex;flex-direction:column;align-items:stretch;min-width:340px;}
+      #password-form label{color:var(--accent-warm);font-weight:600;font-size:1rem;margin:0 0 12px;text-align:center;}
+      #password-form input{background:#172b3a;border:1px solid rgba(255,255,255,.15);color:var(--text);padding:.85rem 1rem;font-size:.95rem;border-radius:12px;outline:none;margin:0 0 14px;font-family:inherit;transition:.25s;}
+      #password-form input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(63,191,248,.35);}
+      #password-form button{background:linear-gradient(90deg,var(--accent),#1f8cc1);color:#fff;border:0;font-weight:600;letter-spacing:.5px;font-size:.95rem;padding:.85rem 1.4rem;border-radius:14px;cursor:pointer;transition:.25s;}
+      #password-form button:hover{filter:brightness(1.08);} 
+      #password-error{color:var(--danger);font-size:.75rem;letter-spacing:.5px;text-align:center;}
+      @media (max-width:780px){
+        header{padding:46px 16px 32px;}
+        .gear-shell{padding:44px 24px 54px;border-radius:28px;}
+        .gear-tabs{gap:12px;}
+        .gear-tab{min-width:46%;padding:1rem 1rem;border-radius:16px;}
+      }
+    </style>
+</head>
+<body>
+    <!-- Password Overlay (restyled) -->
+    <div id="password-overlay">
+        <form id="password-form" autocomplete="off">
+            <label for="password">Enter Access Code</label>
+            <input type="password" id="password" autofocus placeholder="Password">
+            <button type="submit">Unlock</button>
+            <div id="password-error" style="display:none;">Incorrect password. Try again.</div>
+        </form>
+    </div>
+    <header>
+        <h1>Gear for Swarming</h1>
+        <p>Ultimate Swarming Guide</p>        <nav class="site-nav" aria-label="Main">
+          <a href="starters.html">Starters</a>
+          <a href="gear.html" class="active">Gear</a>
+          <a href="commanders.html">Commanders</a>
+          <a href="keypoints.html">Key Points</a>
+          <a href="warleading.html">Warleading</a>
+          <a href="defense.html">Defense</a>
+          <a href="credits.html">Credits</a>
+        </nav>
+    </header>
+    <main>
+      <div class="gear-shell">
+        <h2>Swarming Gear Recommendations</h2>
+        <div class="gear-tabs" role="tablist">
+            <div class="gear-tab" data-type="god" onclick="showGear('god')" aria-selected="false"><h3>God Tier</h3></div>
+            <div class="gear-tab" data-type="avg" onclick="showGear('avg')" aria-selected="false"><h3>Average</h3></div>
+            <div class="gear-tab" data-type="min" onclick="showGear('min')" aria-selected="false"><h3>Minimum</h3></div>
+            <div class="gear-tab" data-type="feed" onclick="showGear('feed')" aria-selected="false"><h3>Feeding the Flag</h3></div>
+            <div class="gear-tab" data-type="explain" onclick="showGear('explain')" aria-selected="false"><h3>Explanation</h3></div>
+        </div>
+        <div id="gear-content"></div>
+      </div>
+    </main>
+    <script>
+        // Password protection with localStorage
+        const PASSWORD = "SeifStinks123";
+        const overlay = document.getElementById('password-overlay');
+        const form = document.getElementById('password-form');
+        const input = document.getElementById('password');
+        const error = document.getElementById('password-error');
+        let attempts = 0;
+
+        if (localStorage.getItem('swarmGuideAccess') === 'true') {
+            overlay.style.display = 'none';
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (input.value === PASSWORD) {
+                overlay.style.display = 'none';
+                localStorage.setItem('swarmGuideAccess', 'true');
+            } else {
+                attempts++;
+                error.style.display = 'block';
+                input.value = '';
+                input.focus();
+                if (attempts >= 10) {
+                    overlay.innerHTML = '<div style="color:#fff;font-size:2rem;font-weight:600;">Access denied.</div>';
+                }
+            }
+        });
+
+        function showGear(type) {
+            let html = '';
+            if (type === 'god') {
+                html = `
+                    <div style="background:#152635;border:1px solid var(--panel-border);padding:2rem;border-radius:24px;margin-bottom:2rem;box-shadow:var(--panel-glow);">
+                        <h3 style="color:#ffd54a;margin-top:0;">Full Legendary</h3>
+                        <ul style="color:var(--muted);">
+                            <li>God tier means you have at least all level IV gear including accessories.</li>
+                            <li>Anything above this is bonus value.</li>
+                        </ul>
+                        <div style="margin-top:1.5rem;">
+                            <div style="display:flex;gap:1rem;justify-content:center;margin-bottom:1.5rem;flex-wrap:wrap;">
+                                <button onclick="showGodExample('arch')" style="background:#1c3242;color:#ffd54a;border:1px solid rgba(255,213,74,.4);padding:.55rem 1.1rem;border-radius:10px;cursor:pointer;font-weight:600;">Archer</button>
+                                <button onclick="showGodExample('inf')" style="background:#1c3242;color:#ffd54a;border:1px solid rgba(255,213,74,.4);padding:.55rem 1.1rem;border-radius:10px;cursor:pointer;font-weight:600;">Infantry</button>
+                                <button onclick="showGodExample('cav')" style="background:#1c3242;color:#ffd54a;border:1px solid rgba(255,213,74,.4);padding:.55rem 1.1rem;border-radius:10px;cursor:pointer;font-weight:600;">Cavalry</button>
+                            </div>
+                            <div id="god-example-img" style="text-align:center;"></div>
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'avg') {
+                html = `
+                    <div style="background:#152635;border:1px solid var(--panel-border);padding:2rem;border-radius:24px;margin-bottom:2rem;box-shadow:var(--panel-glow);">
+                        <h3 style="color:#fff;margin-top:0;">Average</h3>
+                        <ul style="color:var(--muted);">
+                            <li>A couple crits, maybe 1 accessory (still level 1).</li>
+                            <li>Almost all pieces at level 4; a few may lag behind.</li>
+                        </ul>
+                        <div style="color:var(--muted);margin-bottom:1rem;">Typical solid swarmer baseline.</div>
+                        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+                            <button onclick="showAvgExample('arch')" style="background:#1c3242;color:#fff;border:1px solid rgba(255,255,255,.18);padding:.55rem 1.1rem;border-radius:10px;cursor:pointer;font-weight:600;">Archer</button>
+                            <button onclick="showAvgExample('inf')" style="background:#1c3242;color:#fff;border:1px solid rgba(255,255,255,.18);padding:.55rem 1.1rem;border-radius:10px;cursor:pointer;font-weight:600;">Infantry</button>
+                            <button onclick="showAvgExample('cav')" style="background:#1c3242;color:#fff;border:1px solid rgba(255,255,255,.18);padding:.55rem 1.1rem;border-radius:10px;cursor:pointer;font-weight:600;">Cavalry</button>
+                        </div>
+                        <div id="avg-example-img" style="margin-top:1.2rem;text-align:center;"></div>
+                    </div>
+                `;
+            } else if (type === 'min') {
+                html = `
+                    <div style="background:#152635;border:1px solid var(--panel-border);padding:2rem;border-radius:24px;margin-bottom:2rem;box-shadow:var(--panel-glow);">
+                        <h3 style="color:#7ad;margin-top:0;">Minimum</h3>
+                        <div style="color:var(--muted);text-align:center;padding:2rem 0;font-size:1.1rem;">Coming soon</div>
+                    </div>
+                `;
+            } else if (type === 'feed') {
+                html = `
+                    <div style="background:#152635;border:1px solid var(--panel-border);padding:2rem;border-radius:24px;margin-bottom:2rem;box-shadow:var(--panel-glow);">
+                        <h3 style="color:#ff714d;margin-top:0;">Feeding the Flag</h3>
+                        <div style="color:var(--muted);text-align:center;padding:2rem 0;font-size:1.1rem;">Coming soon</div>
+                    </div>
+                `;
+            } else if (type === 'explain') {
+                html = `
+                    <div style="background:#152635;border:1px solid var(--panel-border);padding:2rem;border-radius:24px;margin-bottom:2rem;box-shadow:var(--panel-glow);">
+                        <h3 style="color:#fff;margin-top:0;">Explanation</h3>
+                        <div style="color:var(--muted);text-align:center;padding:2rem 0;font-size:1.1rem;">Coming soon</div>
+                        <div style="margin-top:1.8rem;text-align:center;display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;">
+                            <button onclick="showExplanationTab('accessories')" style="background:#1c3242;color:#ffd54a;border:1px solid rgba(255,213,74,.4);padding:.55rem 1.1rem;border-radius:10px;cursor:pointer;font-weight:600;">Accessories</button>
+                            <button onclick="showExplanationTab('awaken')" style="background:#1c3242;color:#7ad;border:1px solid rgba(122,221,255,.4);padding:.55rem 1.1rem;border-radius:10px;cursor:pointer;font-weight:600;">Awaken Levels</button>
+                            <button onclick="showExplanationTab('gear')" style="background:#1c3242;color:#fff;border:1px solid rgba(255,255,255,.18);padding:.55rem 1.1rem;border-radius:10px;cursor:pointer;font-weight:600;">Gear Choices</button>
+                            <div id="explanation-tab-content" style="flex:0 0 100%;margin-top:1rem;"></div>
+                        </div>
+                    </div>
+                `;
+            }
+            document.getElementById('gear-content').innerHTML = html;
+        }
+
+        function showExplanationTab(tab) {
+            const target=document.getElementById('explanation-tab-content');
+            if(!target) return;
+            target.innerHTML = `<div style="color:var(--muted);font-size:.9rem;">Coming soon</div>`;
+        }
+        function showGodExample(type) {
+            let img='';
+            if (type === 'arch') img = `<img src="godtierarch.png" alt="God Tier Archer Gear" style="max-width:100%;border-radius:14px;box-shadow:0 6px 18px -6px rgba(0,0,0,.6);">`;
+            else if (type==='inf') img=`<img src="godtierinf.png" alt="God Tier Infantry Gear" style="max-width:100%;border-radius:14px;box-shadow:0 6px 18px -6px rgba(0,0,0,.6);">`;
+            else if (type==='cav') img=`<img src="godtiercav.png" alt="God Tier Cavalry Gear" style="max-width:100%;border-radius:14px;box-shadow:0 6px 18px -6px rgba(0,0,0,.6);">`;
+            document.getElementById('god-example-img').innerHTML=img;
+        }
+        function showAvgExample(type){
+            let img='';
+            if (type==='arch') img=`<img src="avgarchset.png" alt="Average Archer Example" style="max-width:100%;border-radius:14px;box-shadow:0 6px 18px -6px rgba(0,0,0,.6);">`;
+            else if (type==='inf') img=`<img src="avginfset.png" alt="Average Infantry Example" style="max-width:100%;border-radius:14px;box-shadow:0 6px 18px -6px rgba(0,0,0,.6);">`;
+            else if (type==='cav') img=`<img src="avgcavset.png" alt="Average Cavalry Example" style="max-width:100%;border-radius:14px;box-shadow:0 6px 18px -6px rgba(0,0,0,.6);">`;
+            document.getElementById('avg-example-img').innerHTML=img;
+        }
+        // placeholders
+        function showExplanation(){return;}
+        function showMinExample(type){}
+        function showFeedExample(type){}
+
+        // Default open Gear tab: God tier + ARIA updates and hash sync
+        document.addEventListener('DOMContentLoaded', function(){
+          const hash = location.hash.replace('#','');
+          const valid = ['god','avg','min','feed','explain'];
+          const initial = valid.includes(hash) ? hash : 'god';
+          const tabs = document.querySelectorAll('.gear-tab');
+          const tablist = document.querySelector('.gear-tabs');
+          if(tablist){ tablist.setAttribute('role','tablist'); }
+          tabs.forEach(t=>{ t.setAttribute('role','tab'); t.setAttribute('tabindex','0'); t.setAttribute('aria-selected','false'); });
+
+          function setAriaSelected(key){
+            tabs.forEach(t=>{
+              const sel = t.getAttribute('data-type')===key;
+              t.setAttribute('aria-selected', sel ? 'true' : 'false');
+              t.classList.toggle('active', sel);
+            });
+          }
+
+          function activateTab(key){
+            setAriaSelected(key);
+            const el = document.querySelector(`.gear-tab[data-type="${key}"]`);
+            if(el){ location.hash = key; }
+          }
+
+          showGear(initial);
+          activateTab(initial);
+
+          document.body.addEventListener('click', (e)=>{
+            const tab = e.target.closest('.gear-tab');
+            if(!tab) return;
+            const key = tab.getAttribute('data-type');
+            showGear(key);
+            activateTab(key);
+          });
+          document.body.addEventListener('keydown', (e)=>{
+            if(e.key !== 'Enter' && e.key !== ' ' ) return;
+            const tab = e.target.closest('.gear-tab');
+            if(!tab) return;
+            e.preventDefault();
+            const key = tab.getAttribute('data-type');
+            showGear(key);
+            activateTab(key);
+          });
+          window.addEventListener('hashchange', ()=>{
+            const key = location.hash.replace('#','');
+            if(valid.includes(key)){
+              showGear(key);
+              activateTab(key);
+            }
+          });
+        });
+    </script>
+</body>
+</html>

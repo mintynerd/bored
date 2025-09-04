@@ -1,38 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>1093 Recruitment</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Swarming Guide</title>
+    <link rel="stylesheet" href="main.css">
+    <!-- Auto redirect to starters.html -->
+    <meta http-equiv="refresh" content="0; url=starters.html">
+    <script>window.location.replace('starters.html');</script>
 </head>
-<body>
-  <div class="header">
-    <img src="1093galaxy.gif" alt="1093 Galaxy" class="header-logo" />
-    <h1>1093 RECRUITMENT PAGE</h1>
-    <p>Join us. Fight with honor. Rise with us.</p>
-    <div class="moving-container">
-      <a href="https://discord.gg/invite/1093apply" target="_blank" class="moving-link">
-        Click here if you want to apply to the longest lasting imperium in Rise of Kingdoms.
-      </a>
+<body style="background: #000;">
+    <!-- Redirect fallback content (shown only if redirect fails) -->
+    <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;color:#fff;font-family:Inter,system-ui,sans-serif;text-align:center;">
+      <div>
+        <h1 style="margin:0 0 1rem;">Redirecting…</h1>
+        <p style="margin:0 0 1.2rem;">If you are not redirected automatically, <a href="starters.html" style="color:#ffd54a;">click here to go to the Starters page</a>.</p>
+      </div>
     </div>
-  </div>
-
-  <div class="main-content">
-    <span class="placeholder-text">placeholder</span>
-  </div>
-
-  <!-- Use this footer for all pages -->
-  <div class="footer">
-    <img src="1093galaxy.gif" alt="1093 Galaxy" class="footer-logo" />
-    <div class="footer-links">
-      <a href="kvkhistory.html">KvK History</a>
-      <a href="contentcreators.html">Content Creators</a>
-      <a href="kvkhighlights.html">KvK Highlights</a>
-      <a href="slap1818.html">Slap 1818</a>
-      <a href="https://discord.gg/invite/1093apply" target="_blank">Migration Discord</a>
-      <a href="https://forms.gle/your-application-link" target="_blank">Application Link</a>
+    <div id="password-overlay" style="position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;background:#000;display:flex;align-items:center;justify-content:center;">
+        <form id="password-form" style="background:#fff;padding:2rem 2.5rem;border-radius:10px;box-shadow:0 2px 8px rgba(10,35,66,0.18);display:flex;flex-direction:column;align-items:center;">
+            <label for="password" style="font-size:1.2rem;margin-bottom:1rem;color:#0a2342;">Enter password to view the guide:</label>
+            <input type="password" id="password" style="padding:0.5rem 1rem;font-size:1rem;border-radius:5px;border:1px solid #ccc;margin-bottom:1rem;" autofocus>
+            <button type="submit" style="padding:0.5rem 1.5rem;background:#0a2342;color:#fff;border:none;border-radius:5px;font-size:1rem;cursor:pointer;">Enter</button>
+            <div id="password-error" style="color:#e8491d;margin-top:0.5rem;display:none;">Incorrect password. Try again.</div>
+        </form>
     </div>
-  </div>
+    <header>
+        <h1>Ultimate Swarming Guide</h1>
+        <p>By Minty and Couple Other Noobs</p>
+    </header>
+    <main>
+        <h2>Welcome to the Ultimate Swarming Guide!</h2>
+        <p>
+            Swarming is a powerful tactic in Rise of Kingdoms which can swing the tides of kvk fights very fast,
+            being able to swarm efficiently helps you take down enemy structures faster and take less losses in the process.
+        </p>
+        <p>
+            This guide will help you master the art of swarming in Rise of Kingdoms. 
+            Explore tips, gear recommendations, best commanders, and more to become a top-tier or less scuffed swarmer.
+        </p>
+    </main>
+    <footer>
+        <nav>
+            <a href="starters.html">Swarming Starters</a>
+            <a href="gear.html">Gear for Swarming</a>
+            <a href="commanders.html">Best Commanders</a>
+            <!-- <a href="pairings.html">Best Pairings</a> --> <!-- Hidden as requested -->
+            <a href="warleading.html">Warleading a Swarm</a>
+            <a href="keypoints.html">Key Points Before Swarming</a>
+            <a href="credits.html">Credits</a>
+        </nav>
+        &copy; 2025 Ultimate Swarming Guide &mdash; All rights reserved.
+    </footer>
+    <script>
+        // Password protection with localStorage
+        const PASSWORD = "SeifStinks123";
+        const overlay = document.getElementById('password-overlay');
+        const form = document.getElementById('password-form');
+        const input = document.getElementById('password');
+        const error = document.getElementById('password-error');
+        let attempts = 0;
+
+        // Check localStorage on load
+        if (localStorage.getItem('swarmGuideAccess') === 'true') {
+            overlay.style.display = 'none';
+            document.body.style.background = '';
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (input.value === PASSWORD) {
+                overlay.style.display = 'none';
+                document.body.style.background = '';
+                localStorage.setItem('swarmGuideAccess', 'true'); // Set flag
+            } else {
+                attempts++;
+                error.style.display = 'block';
+                input.value = '';
+                input.focus();
+                if (attempts >= 10) {
+                    document.body.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100vh;background:#000;"><h1 style="color:#fff;font-size:3rem;">Fuck off Spy</h1></div>';
+                }
+            }
+        });
+    </script>
+    <script src="index.js"></script>
 </body>
 </html>

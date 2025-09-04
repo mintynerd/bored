@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Warleading Swarms - Ultimate Swarming Guide</title>
+<link rel="stylesheet" href="main.css">
+<style>
+:root{
+  --bg:#0a0d12;
+  --panel:#111821;
+  --border:rgba(255,255,255,.08);
+  --text:#e7f0ff;
+  --muted:#a9c1ff;
+  --gold:#ffd54a;
+}
+*{box-sizing:border-box;}
+html,body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+}
+header{
+  text-align:center;
+  padding:34px 12px 20px;
+  background:linear-gradient(180deg,#0c233a,#061626 55%,#061626);
+  border-bottom:1px solid #0d2942;
+}
+header h1{margin:0 0 6px;font-size:clamp(30px,3.6vw,46px);color:var(--gold);}
+header p{margin:0 0 18px;font-size:.95rem;color:var(--muted);font-weight:500;}
+nav.site-nav{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
+  margin:0;
+  padding:0;
+}
+nav.site-nav a{
+  text-decoration:none;
+  background:rgba(255,255,255,.05);
+  color:var(--muted);
+  padding:8px 18px 9px;
+  font-size:.82rem;
+  font-weight:600;
+  border:1px solid var(--border);
+  border-radius:11px;
+  transition:.22s;
+}
+nav.site-nav a:hover{background:rgba(255,255,255,.12);color:var(--text);}
+nav.site-nav a.active{
+  background:var(--gold);
+  color:#222;
+  border-color:var(--gold);
+  box-shadow:0 4px 14px -4px rgba(255,213,74,.6);
+}
+
+main.container{
+  max-width:1400px;
+  margin:0 auto;                /* make shell start at very top under header */
+  padding:0 42px;
+  min-height:calc(100vh - var(--header-h,0px));
+  display:flex;
+}
+.content-shell{
+  /* remove max-height logic; force fill remaining viewport height */
+  background:linear-gradient(160deg,#ffffff 0%,#f5f7fb 55%,#eef2f6 100%);
+  border:1px solid rgba(0,0,0,.08);
+  border-radius:36px;
+  padding:46px clamp(26px,4vw,60px) 46px;
+  box-shadow:0 18px 50px -12px rgba(0,0,0,.55),0 4px 14px rgba(0,0,0,.35);
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  min-height:calc(100vh - var(--header-h,0px) - 40px); /* fills viewport (minus small gap) */
+}
+.scroll-panel{
+  margin:12px 0 0;
+  overflow:auto;
+  padding:0 4px 40px 0; /* extra bottom so last item not cramped */
+  flex:1 1 auto;
+  position:relative;
+  scrollbar-width:thin;
+  scrollbar-color:#203544 rgba(0,0,0,0.15);
+}
+/* WebKit scrollbar styling */
+.scroll-panel::-webkit-scrollbar{
+  width:12px;
+}
+.scroll-panel::-webkit-scrollbar-track{
+  background:linear-gradient(#e9eef3,#dde3e9);
+  border-radius:10px;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.05);
+}
+.scroll-panel::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg,#203544,#16242f);
+  border-radius:10px;
+  border:2px solid #dfe5ea;
+  box-shadow:0 1px 2px rgba(0,0,0,.35);
+  transition:.25s;
+}
+.scroll-panel::-webkit-scrollbar-thumb:hover{
+  background:linear-gradient(180deg,#274057,#1b2d39);
+}
+
+/* Remove the white overlay “weird color thing” (fades) */
+.scroll-fade-top,
+.scroll-fade-bot{
+  display:none !important;
+}
+
+/* If you prefer to keep a very subtle top fade instead, delete the block above
+   and use this instead:
+.scroll-fade-top{background:linear-gradient(#ffffff,rgba(255,255,255,0));height:14px;opacity:.35;}
+.scroll-fade-bot{display:none;}
+*/
+
+.scroll-panel.scrolled .scroll-fade-top{opacity:0;}
+
+.zoom-target{
+  transform-origin:top center;
+  transition:transform .15s ease;
+}
+
+/* CONTENT CARDS (dark inside white shell) */
+.card{
+  background:linear-gradient(180deg,#121c26,#10161d 65%);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:30px;
+  padding:44px clamp(24px,3vw,56px) 54px;
+  box-shadow:0 12px 32px -10px rgba(0,0,0,.55);
+}
+.card h2{
+  margin:0 0 30px;
+  text-align:center;
+  font-size:1.65rem;
+  font-weight:700;
+  letter-spacing:.4px;
+  color:var(--gold);
+}
+
+.segment-tabs{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:-12px 0 26px;}
+.segment-tabs button{
+  background:#1b2732;
+  color:var(--text);
+  border:1px solid rgba(255,255,255,.10);
+  padding:.55rem 1rem;
+  font-size:.75rem;
+  font-weight:600;
+  letter-spacing:.35px;
+  border-radius:10px;
+  cursor:pointer;
+  transition:.22s;
+}
+.segment-tabs button:hover{background:#243340;}
+.segment-tabs button.active{
+  background:var(--gold);
+  color:#222;
+  border-color:var(--gold);
+  box-shadow:0 4px 14px -6px rgba(255,213,74,.6);
+}
+
+.video-shell{
+  position:relative;
+  width:100%;
+  max-width:1120px;
+  margin:0 auto;
+  border-radius:22px;
+  overflow:hidden;
+  aspect-ratio:16/9;
+  box-shadow:0 14px 38px -10px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.06);
+}
+.video-shell iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+
+.segment-label{
+  text-align:center;
+  font-size:.8rem;
+  margin:14px 0 0;
+  opacity:.75;
+}
+
+.note-block{
+  margin:34px auto 4px;
+  max-width:1000px;
+  background:#182530;
+  border:1px solid rgba(255,255,255,.08);
+  padding:22px 26px;
+  border-radius:18px;
+  font-size:.82rem;
+  line-height:1.5;
+  color:var(--muted);
+}
+
+.checklist{
+  counter-reset:step;
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:grid;
+  gap:18px;
+}
+@media (min-width:1000px){
+  .checklist{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+.checklist li{
+  counter-increment:step;
+  background:#182530;
+  border:1px solid rgba(255,255,255,.08);
+  padding:18px 18px 18px 60px;
+  position:relative;
+  border-radius:18px;
+  font-size:.92rem;
+  line-height:1.45;
+  font-weight:500;
+  transition:.23s;
+}
+.checklist li:hover{background:#1f3140;border-color:rgba(255,255,255,.16);}
+.checklist li::before{
+  content:counter(step);
+  position:absolute;
+  left:16px;top:50%;transform:translateY(-50%);
+  width:36px;height:36px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,213,74,.16);
+  color:var(--gold);
+  border:1px solid rgba(255,213,74,.45);
+  font-weight:700;
+  border-radius:12px;
+  font-size:.9rem;
+}
+
+footer{
+  text-align:center;
+  font-size:.75rem;
+  opacity:.55;
+  margin:50px 0 70px;
+  letter-spacing:.4px;
+}
+
+.panel-header{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  margin:4px 0 8px;
+}
+@media (min-width:900px){
+  .panel-header{flex-direction:row;gap:34px;}
+}
+
+/* Top tab group */
+.top-tabs{
+  display:flex;
+  background:#0f1c27;
+  padding:6px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:20px;
+  box-shadow:0 4px 12px -6px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.04);
+}
+.top-tabs button{
+  background:transparent;
+  border:0;
+  color:var(--muted);
+  font-size:.8rem;
+  font-weight:600;
+  letter-spacing:.4px;
+  padding:10px 22px;
+  border-radius:14px;
+  cursor:pointer;
+  position:relative;
+  transition:.28s;
+}
+.top-tabs button:hover{color:var(--text);}
+.top-tabs button.active{
+  background:linear-gradient(145deg,#ffd54a,#ff9f2d);
+  color:#1d1500;
+  box-shadow:0 4px 14px -4px rgba(255,185,40,.55);
+}
+
+/* Zoom controls */
+.zoom-controls{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:#0f1c27;
+  padding:8px 16px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;
+  box-shadow:0 4px 12px -6px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.04);
+}
+.zoom-controls button{
+  background:#1b2c38;
+  color:var(--text);
+  border:1px solid rgba(255,255,255,.16);
+  width:38px;
+  height:38px;
+  font-size:1rem;
+  font-weight:600;
+  border-radius:12px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:.25s;
+}
+.zoom-controls button:hover{background:#243847;}
+.zoom-controls #zoom-level{
+  font-size:.72rem;
+  font-weight:600;
+  letter-spacing:.5px;
+  background:#182834;
+  color:var(--gold);
+  padding:7px 12px 6px;
+  border-radius:12px;
+  min-width:58px;
+  text-align:center;
+  border:1px solid rgba(255,255,255,.1);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.03);
+}
+
+/* Optional: subtle focus outline for accessibility */
+.top-tabs button:focus-visible,
+.zoom-controls button:focus-visible{
+  outline:2px solid var(--gold);
+  outline-offset:2px;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Warleading Swarms</h1>
+  <p>Ultimate Swarming Guide</p>
+  <nav class="site-nav">
+    <a href="starters.html">Swarming Starters</a>
+    <a href="gear.html">Gear</a>
+    <a href="commanders.html">Commanders</a>
+    <a href="keypoints.html">Key Points</a>
+    <a href="warleading.html" class="active">Warleading</a>
+    <a href="defense.html">Defense</a>
+    <a href="credits.html">Credits</a>
+  </nav>
+</header>
+
+<main class="container">
+  <section class="content-shell">
+    <div class="panel-header">
+      <div class="top-tabs">
+        <button id="tab-checklist" onclick="showWarleadTab('checklist')">Checklist</button>
+        <button id="tab-pre" onclick="showWarleadTab('pre')">Must Watch Guides</button>
+      </div>
+      <div class="zoom-controls">
+        <button type="button" onclick="changeZoom(-0.1)">−</button>
+        <span id="zoom-level">100%</span>
+        <button type="button" onclick="changeZoom(0.1)">+</button>
+      </div>
+    </div>
+    <div class="scroll-panel" id="scrollPanel">
+      <div class="scroll-fade-top"></div>
+      <div id="warlead-tab-content" class="zoom-target"></div>
+      <div class="scroll-fade-bot"></div>
+    </div>
+  </section>
+</main>
+
+<footer>&copy; 2025 Ultimate Swarming Guide</footer>
+
+<script>
+let currentZoom=1;
+
+function applyFullHeight(){
+  const header=document.querySelector('header');
+  if(header){
+    document.documentElement.style.setProperty('--header-h',header.offsetHeight+'px');
+  }
+}
+
+function changeZoom(delta){
+  currentZoom=Math.min(1.8,Math.max(.6, +(currentZoom+delta).toFixed(2)));
+  const target=document.querySelector('.zoom-target');
+  if(target) target.style.transform=`scale(${currentZoom})`;
+  document.getElementById('zoom-level').textContent=Math.round(currentZoom*100)+'%';
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  applyFullHeight();
+  const panel=document.getElementById('scrollPanel');
+  if(panel){
+    panel.addEventListener('scroll',()=>{
+      if(panel.scrollTop>10) panel.classList.add('scrolled');
+      else panel.classList.remove('scrolled');
+    });
+  }
+  showWarleadTab('checklist');
+});
+window.addEventListener('resize',applyFullHeight);
+
+function activateTop(id){
+  document.querySelectorAll('.top-tabs button').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById(id);
+  if(btn) btn.classList.add('active');
+}
+
+function showWarleadTab(tab){
+  const wrap=document.getElementById('warlead-tab-content');
+  if(!wrap) return;
+  if(tab==='checklist'){
+    activateTop('tab-checklist');
+    wrap.innerHTML=`
+      <div class="card">
+        <h2>Checklist</h2>
+        <ol class="checklist">
+          <li>Make sure you have people ready to swarm</li>
+          <li>Make sure it's always a full swarm (12x or 12 marches)</li>
+          <li>Always have field around the flag so rally is good</li>
+          <li>Call for people to attack march / keep rally full for max damage</li>
+          <li>Don't use bad rallies or rallies that are weak vs certain garrisons (e.g., Attila Subutai vs pure infantry garrisons)</li>
+        </ol>
+      </div>`;
+    return;
+  }
+  if(tab==='pre'){
+    activateTop('tab-pre');
+    wrap.innerHTML=`
+      <div class="card">
+        <h2>Must Watch Guides</h2>
+        <div class="segment-tabs">
+          <button id="seg1" class="active"
+            onclick="playWarleadSegment(this,'4GBvF7S6eFY',114,468,'1:54–7:48')">Segment 1 (1:54–7:48)</button>
+          <button id="seg2"
+            onclick="playWarleadSegment(this,'tz2ft6xVUJc',5138,5410,'1:25:38–1:30:10')">Segment 2 (1:25:38–1:30:10)</button>
+        </div>
+        <div class="video-shell">
+          <iframe id="pre-iframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen title="Must Watch Guides"></iframe>
+        </div>
+        <div id="pre-segment-label" class="segment-label"></div>
+        <div class="note-block">
+          Use these clips to brief swarms: confirm numbers, ensure debuff marches in first wave, call early refill for rally, and
+          remind players to pull under 300k for better trades.
+        </div>
+      </div>`;
+    playWarleadSegment(document.getElementById('seg1'),'4GBvF7S6eFY',114,468,'1:54–7:48');
+  }
+}
+
+window.playWarleadSegment=function(btn,videoId,start,end,label){
+  if(btn){
+    btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  const iframe=document.getElementById('pre-iframe');
+  if(!iframe) return;
+  const base=`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&autoplay=1`;
+  iframe.src=base+(start!=null?`&start=${start}`:'')+(end!=null?`&end=${end}`:'');
+  const lbl=document.getElementById('pre-segment-label');
+  if(lbl) lbl.textContent=`Segment: ${label}`;
+};
+
+document.addEventListener('DOMContentLoaded',()=>{
+  applyFullHeight();
+  const panel=document.getElementById('scrollPanel');
+  if(panel){
+    panel.addEventListener('scroll',()=>{
+      if(panel.scrollTop>10) panel.classList.add('scrolled');
+      else panel.classList.remove('scrolled');
+    });
+  }
+  showWarleadTab('checklist');
+});
+window.addEventListener('resize',applyFullHeight);
+</script>
+</body>
+</html>

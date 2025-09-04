@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Best Pairings - Ultimate Swarming Guide</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="stylesheet" href="main.css">
+  <style>
+    :root{
+      --bg:#050b11;
+      --bg-accent:
+        radial-gradient(circle at 78% 18%,rgba(63,191,248,.18),transparent 60%),
+        radial-gradient(circle at 14% 82%,rgba(255,213,74,.15),transparent 65%),
+        linear-gradient(135deg,#081520,#0d1d2b 55%,#0b1622);
+      --panel:rgba(18,31,45,.78);
+      --panel-border:rgba(255,255,255,.08);
+      --panel-glow:0 10px 34px -12px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.04);
+      --text:#ecf4ff;
+      --muted:#8ea5bd;
+      --accent:#3fbff8;
+      --accent-warm:#ffd54a;
+      --danger:#ff6b5c;
+      --radius:16px;
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    }
+    body{
+      margin:0;
+      background:var(--bg);
+      background-image:var(--bg-accent);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+    }
+    header{text-align:center;padding:56px 18px 38px;position:relative;}
+    header h1{
+      margin:0 0 12px;
+      font-size:clamp(40px,4.2vw,62px);
+      line-height:1.05;
+      font-weight:700;
+      background:linear-gradient(90deg,var(--accent),var(--accent-warm) 65%,#ff9f4d);
+      -webkit-background-clip:text;
+      color:transparent;
+      filter:drop-shadow(0 4px 18px rgba(63,191,248,.25));
+      letter-spacing:.5px;
+    }
+    header p{margin:0 auto;max-width:820px;font-size:1.02rem;line-height:1.5;color:var(--muted);}
+    #password-overlay{
+      background:rgba(5,11,17,.92);
+      backdrop-filter:blur(14px) saturate(150%);
+    }
+    #password-form{
+      background:linear-gradient(155deg,#132331,#101d29);
+      border:1px solid var(--panel-border);
+      box-shadow:var(--panel-glow);
+      border-radius:24px !important;
+      padding:48px 44px !important;
+      font-family:inherit;
+    }
+    #password-form label{color:var(--accent-warm) !important;font-weight:600;}
+    #password-form input{
+      background:#172b3a !important;
+      border:1px solid rgba(255,255,255,.12) !important;
+      color:var(--text) !important;
+      border-radius:10px !important;
+      padding:.8rem 1rem !important;
+      font-size:.95rem !important;
+      transition:.25s;
+    }
+    #password-form input:focus{
+      outline:none;
+      border-color:var(--accent) !important;
+      box-shadow:0 0 0 3px rgba(63,191,248,.35);
+    }
+    #password-form button{
+      background:linear-gradient(90deg,var(--accent),#1f8cc1);
+      border:none;
+      border-radius:12px;
+      font-weight:600;
+      letter-spacing:.5px;
+      font-size:.95rem;
+      padding:.85rem 1.4rem;
+      margin-top:.25rem;
+      cursor:pointer;
+      transition:.25s;
+      color:#fff;
+    }
+    #password-form button:hover{filter:brightness(1.07);}
+    #password-error{color:var(--danger) !important;font-size:.8rem !important;}
+
+    main{max-width:1400px;margin:0 auto 40px;padding:0 clamp(22px,4vw,70px) 40px;}
+
+    .swarm-heading{
+      text-align:center;
+      margin:0 0 32px;
+      font-size:clamp(40px,4.5vw,60px);
+      font-weight:800;
+      letter-spacing:.8px;
+      color:#ffd54a;
+      text-shadow:0 4px 18px rgba(0,0,0,.45),0 0 8px rgba(255,213,74,.35);
+    }
+
+    .tier-list{max-width:1100px;margin:42px auto 70px;display:flex;flex-direction:column;gap:26px;}
+    .tier-row{
+      display:grid;
+      grid-template-columns:140px 1fr;
+      background:linear-gradient(135deg,rgba(24,40,54,.85),rgba(17,28,40,.85));
+      border:1px solid var(--panel-border);
+      border-radius:30px;
+      box-shadow:var(--panel-glow);
+      overflow:hidden;
+      position:relative;
+    }
+    .tier-row::before{
+      content:"";
+      position:absolute;inset:0;
+      background:
+        radial-gradient(circle at 25% 20%,rgba(63,191,248,.18),transparent 60%),
+        radial-gradient(circle at 85% 80%,rgba(255,213,74,.15),transparent 65%);
+      pointer-events:none;
+      mix-blend-mode:overlay;
+    }
+    .tier-label{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:1.85rem;
+      font-weight:700;
+      letter-spacing:2px;
+      padding:24px 18px;
+      color:#07131d;
+      text-shadow:0 2px 6px rgba(255,255,255,.35);
+      position:relative;
+      z-index:1;
+    }
+    .tier-row[data-tier="S+"] .tier-label{background:linear-gradient(125deg,#ff3758,#ffaf2d);}    
+    .tier-row[data-tier="S"] .tier-label{background:linear-gradient(125deg,#8f5bff,#ffcc5a);}    
+    .tier-row[data-tier="Decent"] .tier-label{background:linear-gradient(125deg,#ffd54a,#ff8a2d);}    
+    .tier-row[data-tier="Niche"] .tier-label{background:linear-gradient(125deg,#26c06d,#3fbff8);}    
+    .tier-row[data-tier="Glock"] .tier-label{background:linear-gradient(125deg,#555,#999);}    
+
+    .tier-commanders{
+      display:flex;
+      flex-wrap:wrap;
+      gap:22px;
+      padding:26px 34px 30px;
+      align-content:flex-start;
+    }
+    .tier-commanders img{
+      width:86px;
+      height:86px;
+      border-radius:22px;
+      background:#122330;
+      border:2px solid rgba(255,255,255,.08);
+      box-shadow:0 6px 18px -6px rgba(0,0,0,.55);
+      transition:.28s;
+      cursor:pointer;
+      position:relative;
+    }
+    .tier-commanders img:hover{
+      transform:translateY(-6px) scale(1.05);
+      border-color:var(--accent);
+      box-shadow:0 10px 30px -8px rgba(63,191,248,.55),0 0 0 1px rgba(63,191,248,.5);
+    }
+
+    #archer-details-panel{
+      background:linear-gradient(160deg,rgba(25,43,58,.9),rgba(18,31,45,.9));
+      border:1px solid var(--panel-border) !important;
+      border-radius:34px !important;
+      box-shadow:var(--panel-glow) !important;
+      backdrop-filter:blur(14px) saturate(150%);
+      color:var(--text);
+      padding:42px 46px;
+      max-width:1150px;
+      margin:60px auto;
+      display:none;
+    }
+    #archer-details-panel h2{
+      font-size:2.1rem;
+      background:linear-gradient(90deg,var(--accent),var(--accent-warm));
+      -webkit-background-clip:text;
+      color:transparent;
+      margin:0 0 10px;
+    }
+    #archer-details-panel [id$="-role"]{
+      font-weight:600;
+      letter-spacing:.5px;
+      font-size:1rem;
+      color:var(--muted);
+      text-transform:uppercase;
+    }
+    .detail-box{
+      background:#1f1f1f;
+      border:1px solid #292929;
+      border-radius:18px;
+      padding:22px 24px;
+    }
+    #archer-detail-talents img{border:1px solid rgba(255,255,255,.1);border-radius:18px;max-width:100%;height:auto;}
+    .commander-tooltip{
+      background:#0f1d28 !important;
+      border:1px solid var(--panel-border) !important;
+      border-radius:14px !important;
+      font-size:.85rem !important;
+      font-weight:500 !important;
+      color:var(--text) !important;
+      box-shadow:0 10px 34px -12px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.05) !important;
+      max-width:240px;
+      line-height:1.35;
+      padding:.75rem .9rem !important;
+      position:fixed;
+      pointer-events:none;
+      display:none;
+      z-index:10000;
+    }
+    @media (max-width:900px){
+      .tier-commanders{gap:16px;padding:26px 24px 30px;}
+      .tier-commanders img{width:74px;height:74px;border-radius:18px;}
+      .tier-row{grid-template-columns:120px 1fr;}
+    }
+    @media (max-width:620px){
+      .tier-row{grid-template-columns:100%;padding-top:0;}
+      .tier-label{font-size:1.55rem;padding:18px 0 12px;}
+      .tier-commanders{padding:10px 22px 30px;}
+    }
+
+    .site-header{
+      text-align:center;
+      padding:70px 18px 46px;
+      background:linear-gradient(180deg,#061423,#071c2e 65%,transparent);
+      position:relative;
+    }
+    .site-title{
+      margin:0 0 10px;
+      font-size:clamp(46px,4.8vw,68px);
+      font-weight:700;
+      letter-spacing:.8px;
+      background:linear-gradient(90deg,#ffd54a,#ffb135 55%,#ff9f2d);
+      -webkit-background-clip:text;
+      color:transparent;
+      text-shadow:0 6px 26px rgba(0,0,0,.55);
+    }
+    .site-tagline{
+      margin:0 0 26px;
+      font-size:1rem;
+      font-weight:500;
+      letter-spacing:.5px;
+      color:#b2c4d4;
+    }
+    .main-nav{
+      display:flex;
+      flex-wrap:wrap;
+      gap:14px;
+      justify-content:center;
+    }
+    .main-nav a{
+      text-decoration:none;
+      font-size:.8rem;
+      font-weight:600;
+      letter-spacing:.5px;
+      color:#d2e4f2;
+      background:#0d1f2d;
+      padding:.75rem 1.45rem;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:14px;
+      position:relative;
+      transition:.28s;
+      box-shadow:0 2px 6px rgba(0,0,0,.4);
+    }
+    .main-nav a:hover{
+      color:#fff;
+      background:#132c3d;
+      border-color:rgba(255,255,255,.14);
+    }
+    .main-nav a.active{
+      background:linear-gradient(145deg,#ffd54a,#ff9f2d);
+      color:#1c1500;
+      border-color:#ffcd2d;
+      box-shadow:0 6px 22px -6px rgba(255,185,40,.55);
+    }
+    .main-nav a:focus-visible{
+      outline:2px solid #3fbff8;
+      outline-offset:2px;
+    }
+    @media (max-width:680px){
+      .site-header{padding:56px 16px 42px;}
+      .main-nav a{padding:.65rem 1.1rem;font-size:.72rem;}
+    }
+
+    .troop-tabs{display:flex;justify-content:center;gap:12px;margin:10px 0 34px;flex-wrap:wrap;}
+    .troop-tab-btn{
+      background:#132d4f;
+      color:#d5e6f4;
+      border:1px solid rgba(255,255,255,.08);
+      padding:.65rem 1.2rem;
+      font-size:.75rem;
+      font-weight:600;
+      letter-spacing:.6px;
+      border-radius:14px;
+      cursor:pointer;
+      transition:.25s;
+    }
+    .troop-tab-btn.active{background:linear-gradient(145deg,#ffd54a,#ff9f2d);color:#1c1500;border-color:#ffcd2d;box-shadow:0 6px 20px -6px rgba(255,185,40,.55);}    
+    .troop-tab-btn:hover:not(.active){background:#0a2342;color:#fff;}
+    .click-hint{max-width:880px;margin:-6px auto 30px;padding:14px 20px;background:linear-gradient(110deg,rgba(255,213,74,.22),rgba(63,191,248,.22));border:1px solid rgba(255,213,74,.55);border-radius:18px;font-size:.9rem;letter-spacing:.45px;/* changed color for higher contrast */color:#082637;font-weight:700;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(63,191,248,.35),0 6px 22px -6px rgba(0,0,0,.6);text-shadow:0 2px 4px rgba(255,255,255,.45),0 0 10px rgba(63,191,248,.4);} 
+    .click-hint:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.18),transparent 70%);mix-blend-mode:overlay;animation:shine 5s linear infinite;} 
+    .click-hint span{background:linear-gradient(140deg,#ffd54a,#ff9f2d);padding:4px 12px;border-radius:12px;font-size:.62rem;letter-spacing:1px;font-weight:700;color:#1d1300;border:1px solid rgba(0,0,0,.25);text-transform:uppercase;animation:pulse 2.6s infinite;} 
+    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,213,74,.7);}50%{box-shadow:0 0 0 8px rgba(255,213,74,0);} } 
+    @keyframes shine{0%{transform:translateX(-60%);}100%{transform:translateX(60%);} }
+
+    /* Pair cards for Setups */
+    .pair-card{display:flex;align-items:center;gap:12px;background:#0d1f2d;border:1px solid var(--panel-border);border-radius:16px;padding:10px 12px;box-shadow:0 2px 8px rgba(0,0,0,.35);} 
+    .pair-card .imgs{display:flex;gap:6px;}
+    .pair-card .pair-label{font-size:.8rem;font-weight:700;color:#ffda55;letter-spacing:.3px;}
+    .or-sep{align-self:center;font-size:.7rem;font-weight:800;letter-spacing:1px;color:#8ea5bd;background:#0d1f2d;border:1px solid rgba(255,255,255,.08);padding:.35rem .6rem;border-radius:999px;}
+
+  </style>
+</head>
+<body>
+  <!-- Password Overlay -->
+  <div id="password-overlay" style="position:fixed;z-index:9999;inset:0;display:flex;align-items:center;justify-content:center;">
+    <form id="password-form" autocomplete="off">
+      <label for="password">Enter password to view the guide:</label>
+      <input id="password" type="password" autofocus>
+      <button type="submit">Enter</button>
+      <div id="password-error" style="display:none;">Incorrect password. Try again.</div>
+    </form>
+  </div>
+
+  <header class="site-header">
+    <h1 class="site-title">Best Swarming Commanders</h1>
+    <p class="site-tagline">Ultimate Swarming Guide</p>
+    <nav class="main-nav" aria-label="Main">
+      <a href="starters.html">Swarming Starters</a>
+      <a href="gear.html">Gear</a>
+      <a href="commanders.html">Commanders</a>
+      <a href="keypoints.html">Key Points</a>
+      <a href="warleading.html">Warleading</a>
+      <a href="defense.html">Defense</a>
+      <a href="credits.html">Credits</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="troop-tabs" role="tablist" aria-label="Troop type tabs">
+      <button id="infantry-tab" class="troop-tab-btn primary-tab active" data-target="infantry-content" role="tab" aria-selected="true" aria-controls="infantry-content">INFANTRY</button>
+      <button id="cavalry-tab" class="troop-tab-btn primary-tab" data-target="cavalry-content" role="tab" aria-selected="false" aria-controls="cavalry-content">CAVALRY</button>
+      <button id="archers-tab" class="troop-tab-btn primary-tab" data-target="archers-content" role="tab" aria-selected="false" aria-controls="archers-content">ARCHERS</button>
+      <button id="setups-tab" class="troop-tab-btn primary-tab" data-target="setups-content" role="tab" aria-selected="false" aria-controls="setups-content">SETUPS</button>
+    </div>
+    <div class="click-hint"><span>TIP</span> Click any commander portrait for talents, formations, accessories, notes & pairings.</div>
+
+    <!-- INFANTRY -->
+    <div id="infantry-content" class="tier-list">
+      <div class="tier-row" data-tier="S+">
+        <div class="tier-label">S+</div>
+        <div class="tier-commanders">
+          <img src="sa.png" alt="Scipio A">
+          <img src="tariq.png" alt="Tariq">
+          <img src="wallace.png" alt="Wallace">
+          <img src="liu.png" alt="Liu">
+        </div>
+      </div>
+      <div class="tier-row" data-tier="S">
+        <div class="tier-label">S</div>
+        <div class="tier-commanders">
+          <img src="ragnar.png" alt="Ragnar">
+          <img src="bq.png" alt="BQ">
+        </div>
+      </div>
+      <div class="tier-row" data-tier="Decent">
+        <div class="tier-label">Decent</div>
+        <div class="tier-commanders">
+          <img src="scipio.png" alt="Scipio">
+          <img src="alex.png" alt="Alex">
+        </div>
+      </div>
+      <div class="tier-row" data-tier="Niche">
+        <div class="tier-label">Niche</div>
+        <div class="tier-commanders">
+          <img src="guan.png" alt="Guan">
+          <img src="sargon.png" alt="Sargon (Old)">
+        </div>
+      </div>
+    </div>
+
+    <!-- CAVALRY -->
+    <div id="cavalry-content" class="tier-list" style="display:none;">
+      <div class="tier-row" data-tier="Glock">
+        <div class="tier-label">Glock</div>
+        <div class="tier-commanders">
+          <img src="jan.png" alt="Jan">
+        </div>
+      </div>
+      <div class="tier-row" data-tier="S+">
+        <div class="tier-label">S+</div>
+        <div class="tier-commanders">
+          <img src="nevsky.png" alt="Nevsky">
+        </div>
+      </div>
+      <div class="tier-row" data-tier="S">
+        <div class="tier-label">S</div>
+        <div class="tier-commanders">
+          <img src="beli.png" alt="Beli Prime">
+          <img src="justinian.png" alt="Justinian">
+        </div>
+      </div>
+      <div class="tier-row" data-tier="Decent">
+        <div class="tier-label">Decent</div>
+        <div class="tier-commanders">
+          <img src="huo.png" alt="Huo">
+          <img src="joan.png" alt="Joan">
+        </div>
+      </div>
+      <div class="tier-row" data-tier="Niche">
+        <div class="tier-label">Niche</div>
+        <div class="tier-commanders">
+          <img src="mina.png" alt="Mina">
+          <img src="arthur.png" alt="Arthur">
+          <img src="subutai.png" alt="Subutai">
+        </div>
+      </div>
+    </div>
+
+    <!-- ARCHERS -->
+    <div id="archers-content" class="tier-list" style="display:none;">
+      <div class="tier-row" data-tier="S+">
+        <div class="tier-label">S+</div>
+        <div class="tier-commanders">
+          <img src="ashur.png" alt="Ashur">
+          <img src="henry.png" alt="Henry">
+          <img src="zhuge.png" alt="Zhuge">
+          <img src="shajar.png" alt="Shajar">
+        </div>
+      </div>
+      <div class="tier-row" data-tier="S">
+        <div class="tier-label">S</div>
+        <div class="tier-commanders">
+          <img src="hermann.png" alt="Hermann">
+        </div>
+      </div>
+      <div class="tier-row" data-tier="Decent">
+        <div class="tier-label">Decent</div>
+        <div class="tier-commanders">
+          <img src="qsh.png" alt="QSH">
+        </div>
+      </div>
+      <div class="tier-row" data-tier="Niche">
+        <div class="tier-label">Niche</div>
+        <div class="tier-commanders">
+          <img src="boudica.png" alt="Boudica">
+          <img src="tomy.png" alt="Tomy">
+          <img src="shapur.png" alt="Shapur">
+        </div>
+      </div>
+    </div>
+
+    <!-- SETUPS (UPDATED AS TIER LISTS) -->
+    <div id="setups-content" class="tier-list" style="display:none;">
+      <div class="troop-tabs" role="tablist" aria-label="Setup count tabs">
+        <button id="one-troop-tab" class="troop-tab-btn active" data-target="one-troop-content" role="tab" aria-controls="one-troop-content" aria-selected="true">Best 1 Trooptype</button>
+        <button id="two-troop-tab" class="troop-tab-btn" data-target="two-troop-content" role="tab" aria-controls="two-troop-content" aria-selected="false">Best 2 Trooptype</button>
+        <button id="three-troop-tab" class="troop-tab-btn" data-target="three-troop-content" role="tab" aria-controls="three-troop-content" aria-selected="false">Best 3 Trooptype</button>
+      </div>
+
+      <!-- One Trooptype: 1 Cav, 1 Inf, 1 Archer (inside tier rows; no S/S+ labels) -->
+      <div id="one-troop-content" class="tier-list">
+        <div class="tier-row" data-tier="S+">
+          <div class="tier-label">1 Cav</div>
+          <div class="tier-commanders">
+            <div class="pair-card">
+              <div class="imgs">
+                <img src="nevsky.png" alt="Nevsky" data-static="true">
+                <img src="beli.png" alt="Beli" data-static="true">
+              </div>
+              <div class="pair-label">Nevsky + Beli</div>
+            </div>
+          </div>
+        </div>
+        <div class="tier-row" data-tier="S+">
+          <div class="tier-label">1 Inf</div>
+          <div class="tier-commanders">
+            <div class="pair-card">
+              <div class="imgs">
+                <img src="sa.png" alt="Scipio A" data-static="true">
+                <img src="liu.png" alt="Liu" data-static="true">
+              </div>
+              <div class="pair-label">Scipio A + Liu</div>
+            </div>
+          </div>
+        </div>
+        <div class="tier-row" data-tier="S+">
+          <div class="tier-label">1 Archer</div>
+          <div class="tier-commanders">
+            <div class="pair-card">
+              <div class="imgs">
+                <img src="ashur.png" alt="Ashur" data-static="true">
+                <img src="henry.png" alt="Henry" data-static="true">
+              </div>
+              <div class="pair-label">Ashur + Henry</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two Trooptype: 2 Cav, 2 Inf, 2 Archer (inside tier rows; no S/S+ labels) -->
+      <div id="two-troop-content" class="tier-list" style="display:none;">
+        <div class="tier-row" data-tier="S">
+          <div class="tier-label">2 Cav</div>
+          <div class="tier-commanders">
+            <div class="pair-card">
+              <div class="imgs">
+                <img src="nevsky.png" alt="Nevsky" data-static="true">
+                <img src="beli.png" alt="Beli" data-static="true">
+              </div>
+              <div class="pair-label">Nevsky + Beli</div>
+            </div>
+            <div class="pair-card">
+              <div class="imgs">
+                <img src="arthur.png" alt="Arthur" data-static="true">
+                <img src="subutai.png" alt="Subutai" data-static="true">
+              </div>
+              <div class="pair-label">Arthur + Subutai</div>
+            </div>
+            <div class="or-sep">OR</div>
+            <div class="pair-card">
+              <div class="imgs">
+                <img src="huo.png" alt="Huo" data-static="true">
+                <img src="justinian.png" alt="Justinian" data-static="true">
+              </div>
+              <div class="pair-label">Huo + Justinian</div>
+            </div>
+          </div>
+        </div>
+        <div class="tier-row" data-tier="S">
+          <div class="tier-label">2 Inf</div>
+          <div class="tier-commanders">
+            <div class="pair-card">
+              <div class="imgs">
+                <img src="sa.png" alt="Scipio A" data-static="true">
+                <img src="liu.png" alt="Liu" data-static="true">
+              </div>
+              <div class="pair-label">Scipio A + Liu</div>
+            </div>
+            <div class="pair-card">
+              <div class="imgs">
+                <img src="ragnar.png" alt="Ragnar" data-static="true">
+                <img src="tariq.png" alt="Tariq" data-static="true">
+              </div>
+              <div class="pair-label">Ragnar + Tariq</div>
+            </div>
+          </div>
+        </div>
+        <div class="tier-row" data-tier="S">
+          <div class="tier-label">2 Archer</div>
+          <div class="tier-commanders">
+            <div class="pair-card">
+              <div class="imgs">
+                <img src="ashur.png" alt="Ashur" data-static="true">
+                <img src="henry.png" alt="Henry" data-static="true">
+              </div>
+              <div class="pair-label">Ashur + Henry</div>
+            </div>
+            <div class="pair-card">
+              <div class="imgs">
+                <img src="zhuge.png" alt="Zhuge" data-static="true">
+                <img src="hermann.png" alt="Hermann" data-static="true">
+              </div>
+              <div class="pair-label">Zhuge + Hermann</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Three Trooptype: 3 Cav, 3 Inf, 3 Archer (inside tier rows; no S/S+ labels) -->
+      <div id="three-troop-content" class="tier-list" style="display:none;">
+        <div class="tier-row" data-tier="S">
+          <div class="tier-label">3 Cav</div>
+          <div class="tier-commanders">
+            <div class="pair-card">
+              <div class="imgs">
+                <img src="nevsky.png" alt="Nevsky" data-static="true">
+                <img src="beli.png" alt="Beli" data-static="true">
+              </div>
+              <div class="pair-label">Nevsky + Beli</div>
+            </div>
+            <div class="pair-card">
+              <div class="imgs">
+                <img src="arthur.png" alt="Arthur" data-static="true">
+                <img src="subutai.png" alt="Subutai" data-static="true">
+              </div>
+              <div class="pair-label">Arthur + Subutai</div>
+            </div>
+            <div class="pair-card">
+              <div class="imgs">
+                <img src="huo.png" alt="Huo" data-static="true">
+                <img src="justinian.png" alt="Justinian" data-static="true">
+              </div>
+              <div class="pair-label">Huo + Justinian</div>
+            </div>
+          </div>
+        </div>
+        <div class="tier-row" data-tier="S">
+          <div class="tier-label">3 Inf</div>
+          <div class="tier-commanders">
+            <div class="pair-card">
+              <div class="imgs">
+                <img src="sa.png" alt="Scipio A" data-static="true">
+                <img src="liu.png" alt="Liu" data-static="true">
+              </div>
+              <div class="pair-label">Scipio A + Liu</div>
+            </div>
+            <div class="pair-card">
+              <div class="imgs">
+                <img src="ragnar.png" alt="Ragnar" data-static="true">
+                <img src="tariq.png" alt="Tariq" data-static="true">
+              </div>
+              <div class="pair-label">Ragnar + Tariq</div>
+            </div>
+            <div class="pair-card">
+              <div class="imgs">
+                <img src="bq.png" alt="BQ" data-static="true">
+                <img src="wallace.png" alt="Wallace" data-static="true">
+              </div>
+              <div class="pair-label">BQ + Wallace</div>
+            </div>
+          </div>
+        </div>
+        <div class="tier-row" data-tier="S">
+          <div class="tier-label">3 Archer</div>
+          <div class="tier-commanders">
+            <div class="pair-card">
+              <div class="imgs">
+                <img src="boudica.png" alt="Boudica" data-static="true">
+                <img src="ashur.png" alt="Ashur" data-static="true">
+              </div>
+              <div class="pair-label">Boudica + Ashur</div>
+            </div>
+            <div class="pair-card">
+              <div class="imgs">
+                <img src="zhuge.png" alt="Zhuge" data-static="true">
+                <img src="hermann.png" alt="Hermann" data-static="true">
+              </div>
+              <div class="pair-label">Zhuge + Hermann</div>
+            </div>
+            <div class="pair-card">
+              <div class="imgs">
+                <img src="shajar.png" alt="Shajar" data-static="true">
+                <img src="henry.png" alt="Henry" data-static="true">
+              </div>
+              <div class="pair-label">Shajar + Henry</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Details Panel (unchanged below) -->
+    <div id="archer-details-panel">
+      <div style="display:flex;flex-wrap:wrap;gap:40px;">
+        <!-- LEFT -->
+        <div style="flex:0 0 230px;display:flex;flex-direction:column;align-items:flex-start;gap:20px;">
+          <div style="text-align:left;">
+            <div style="width:160px;height:160px;position:relative;">
+              <img id="archer-detail-img" src="" alt="" style="width:160px;height:160px;border-radius:18px;border:4px solid #ffda55;background:#222;object-fit:cover;">
+            </div>
+            <h2 id="archer-detail-name" style="margin:14px 0 4px;font-size:1.9rem;line-height:1;color:#5f707c;font-weight:700;"></h2>
+            <div id="archer-detail-role" style="font-size:.85rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#9aa6af;"></div>
+          </div>
+          <div style="width:100%;">
+            <div style="font-size:1.05rem;font-weight:700;margin:4px 0 10px;display:flex;align-items:center;gap:10px;">
+              <span style="border-bottom:2px solid #ffda55;padding-bottom:4px;">Pairings</span>
+            </div>
+            <div id="archer-pairings-list" style="display:flex;flex-direction:column;gap:14px;"></div>
+          </div>
+        </div>
+        <!-- RIGHT -->
+        <div style="flex:1;min-width:420px;display:flex;flex-direction:column;gap:26px;">
+          <div style="display:flex;flex-wrap:wrap;gap:26px;">
+            <div class="detail-box" style="flex:1;min-width:200px;text-align:center;">
+              <div style="font-size:1.05rem;font-weight:700;margin:0 0 12px;">
+                <span style="padding-bottom:6px;border-bottom:2px solid #7d1010;">Formation</span>
+              </div>
+              <!-- REPLACED SINGLE IMG WITH FLEX BOX -->
+              <div id="archer-detail-formation-img-box" style="display:flex;gap:12px;align-items:center;justify-content:center;margin:6px 0 10px;"></div>
+              <div id="archer-detail-formation-label" style="font-size:.9rem;color:#c9d2d8;font-weight:600;">Wedge</div>
+            </div>
+            <div class="detail-box" style="flex:1;min-width:200px;">
+              <div style="font-size:1.05rem;font-weight:700;margin:0 0 12px;">
+                <span style="padding-bottom:6px;border-bottom:2px solid #7d1010;">Accessories</span>
+              </div>
+              <div id="detail-accessories-box" style="display:flex;flex-wrap:wrap;gap:12px;"></div>
+            </div>
+            <!-- Notes (hidden; kept for future) -->
+            <div id="archer-detail-notes-box" class="detail-box" style="flex:1 1 100%;display:none;">
+              <div style="font-size:1.05rem;font-weight:700;margin:0 0 12px;">
+                <span style="padding-bottom:6px;border-bottom:2px solid #7d1010;">Notes</span>
+              </div>
+              <div id="archer-detail-notes" style="font-size:.9rem;line-height:1.5;color:#d0d7dd;white-space:pre-line;"></div>
+            </div>
+          </div>
+          <div class="detail-box">
+            <div style="font-size:1.05rem;font-weight:700;margin:0 0 14px;">
+              <span style="padding-bottom:6px;border-bottom:2px solid #7d1010;">Talents</span>
+            </div>
+            <div id="archer-detail-talents" style="min-height:140px;display:flex;align-items:center;justify-content:center;">
+              <span style="color:#718088;font-size:.8rem;">No talents diagram added.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <div id="commander-tooltip" class="commander-tooltip"></div>
+
+  <script>
+  // ===== PASSWORD PROTECTION =====
+  (()=>{
+    const PASSWORD="SeifStinks123";
+    const overlay=document.getElementById('password-overlay');
+    const form=document.getElementById('password-form');
+    if(!overlay||!form) return;
+    const input=document.getElementById('password');
+    const err=document.getElementById('password-error');
+    let attempts=0;
+    try{
+      if(localStorage.getItem('swarmGuideAccess')==='true'){
+        overlay.style.display='none';
+      }
+    }catch(e){}
+    form.addEventListener('submit',e=>{
+      e.preventDefault();
+      if(input.value===PASSWORD){
+        overlay.style.display='none';
+        try{localStorage.setItem('swarmGuideAccess','true');}catch(e){}
+      }else{
+        attempts++; err.style.display='block'; input.value=''; input.focus();
+        if(attempts>=10){
+          overlay.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#fff;font-size:2rem;font-weight:600;">Access denied.</div>';
+        }
+      }
+    });
+  })();
+
+  // ===== COMMANDER DATA (NO NOTES) =====
+  const commanderData={
+    // Infantry
+    sa:{name:'Scipio A',role:'Infantry S+',img:'sa.png',
+      formation:'Pincer / Arch',formationImg:'arch.png',
+      accessories:['ring.png','horn.png','gg.png'],talents:'satalents.png',pairings:[
+        ['sa.png','tariq.png','Scipio A + Tariq'],
+        ['sa.png','liu.png','Scipio A + Liu'],
+        ['sa.png','wallace.png','Scipio A + Wallace']
+    ]},
+
+    tariq:{name:'Tariq',role:'Infantry S+',img:'tariq.png',formation:'Wedge',formationImg:'wedge.png',
+      accessories:['horn.png','ring.png'],
+      note:'Do not use as them as a primary',
+      pairings:[] // REMOVED ALL TARIQ PAIRINGS
+    },
+    wallace:{name:'Wallace',role:'Infantry S+',img:'wallace.png',
+      formation:'Pincer / Arch',formationImg:'arch.png',
+      accessories:['ring.png','horn.png','gg.png'],talents:'wallacetalents.png',pairings:[
+        ['wallace.png','sa.png','Wallace + Scipio A'],
+        ['wallace.png','liu.png','Wallace + Liu']
+    ]},
+    liu:{name:'Liu',role:'Infantry S+',img:'liu.png',
+      formation:'Pincer / Arch',formationImg:'arch.png',
+      accessories:['ring.png','horn.png','gg.png'],talents:'liuchetalent.png',pairings:[
+        ['liu.png','sa.png','Liu + Scipio A'],
+        ['liu.png','wallace.png','Liu + Wallace'],
+        ['liu.png','tariq.png','Liu + Tariq'],
+        ['liu.png','sargon.png','Liu + Sargon'],
+        ['liu.png','alex.png','Liu + Alex']
+    ]},
+    ragnar:{name:'Ragnar',role:'Infantry S',img:'ragnar.png',formation:'Wedge',formationImg:'wedge.png',accessories:['ring.png','horn.png'],talents:'ragnartalents.png',pairings:[
+      ['ragnar.png','tariq.png','Ragnar + Tariq'],
+      ['ragnar.png','sargon.png','Ragnar + Sargon'],
+      ['ragnar.png','scipio.png','Ragnar + Scipio']
+    ]},
+    bq:{name:'BQ',role:'Infantry S',img:'bq.png',
+      formation:'Pincer / Arch',formationImg:'arch.png',
+      accessories:['ring.png','horn.png','gg.png'],talents:'wallacetalents.png',pairings:[
+        ['bq.png','wallace.png','BQ + Wallace']
+    ]},
+    scipio:{name:'Scipio',role:'Infantry Decent',img:'scipio.png',formation:'Wedge',formationImg:'wedge.png',
+      accessories:['horn.png','moras.png'],
+      note:'Do not use as them as a primary',
+      pairings:[['scipio.png','tariq.png','Scipio + Tariq']]
+    },
+    alex:{name:'Alex',role:'Infantry Decent',img:'alex.png',formation:'Wedge',formationImg:'wedge.png',
+      accessories:['ring.png','horn.png'],  // CHANGED (was horn + dagger)
+      note:'Do not use as them as a primary',
+      pairings:[['alex.png','scipio.png','Alex + Scipio'],['alex.png','bq.png','Alex + BQ']]
+    },
+    guan:{name:'Guan',role:'Infantry Niche',img:'guan.png',formation:'Wedge',formationImg:'wedge.png',
+      accessories:['horn.png','ring.png'],
+      note:'Silence still king, do not use as a secondary',
+      pairings:[
+        ['guan.png','tariq.png','Guan + Tariq'],
+        ['guan.png','sargon.png','Guan + Sargon'],
+        ['guan.png','ragnar.png','Guan + Ragnar'],
+        ['guan.png','scipio.png','Guan + Scipio']
+      ]
+    },
+    sargon:{name:'Sargon (Old)',role:'Infantry Niche',img:'sargon.png',formation:'Wedge',formationImg:'wedge.png',
+      accessories:['horn.png','ring.png'],
+      talents:'ragnartalents.png', /* use Ragnar talents */
+      note:'Damage overtime gets big value, try hiding him behind ragnar',
+      pairings:[['sargon.png','ragnar.png','Sargon + Ragnar']]
+    },
+
+    // Cavalry
+    nevsky:{name:'Nevsky',role:'Cav S+',img:'nevsky.png',formation:'Wedge',formationImg:'wedge.png',
+      accessories:['ring.png','horn.png'],
+      note:'Best Calvary Swarming Commander',
+      talents:'nevskytalents.png',
+      pairings:[['nevsky.png','beli.png','Nevsky + Beli'],['nevsky.png','justinian.png','Nevsky + Justinian'],['nevsky.png','mina.png','Nevsky + Mina'],['nevsky.png','joan.png','Nevsky + Joan']]
+    },
+    beli:{name:'Beli Prime',role:'Cav S',img:'beli.png',formation:'Wedge',formationImg:'wedge.png',
+      accessories:['horn.png','moras.png'],
+      note:'Must have for swarming, do not use as primary',
+      pairings:[['beli.png','nevsky.png','Beli + Nevsky'],['beli.png','justinian.png','Beli + Justinian']]
+    },
+    justinian:{name:'Justinian',role:'Cav S',img:'justinian.png',formation:'Wedge',formationImg:'wedge.png',
+      accessories:['ring.png','horn.png'],
+      note:'Support tree primary mid for swarming, try use as a secondary',
+      talents:'justiniantalents.png',
+      pairings:[['justinian.png','nevsky.png','Justinian + Nevsky'],['justinian.png','beli.png','Justinian + Beli'],['justinian.png','mina.png','Justinian + Mina']]
+    },
+    huo:{name:'Huo',role:'Cav Decent',img:'huo.png',formation:'Wedge',formationImg:'wedge.png',
+      accessories:['ring.png','horn.png'],
+      note:'None',
+      talents:'huotalents.png',
+      pairings:[['huo.png','nevsky.png','Huo + Nevsky'],['huo.png','beli.png','Huo + Beli'],['huo.png','justinian.png','Huo + Justinian'],['huo.png','mina.png','Huo + Mina']]
+    },
+    joan:{name:'Joan',role:'Cav Decent',img:'joan.png',formation:'Wedge',formationImg:'wedge.png',
+      accessories:['ring.png','horn.png'],
+      note:'Do not use as primary',
+      pairings:[]
+    },
+    mina:{name:'Mina',role:'Cav Niche',img:'mina.png',formation:'Wedge',formationImg:'wedge.png',
+      accessories:['horn.png','ring.png'],
+      note:'Do not use as primary',
+      pairings:[]
+    },
+    arthur:{name:'Arthur',role:'Cav Niche',img:'arthur.png',formation:'Delta',formationImg:'delta.png',
+      accessories:['ring.png','horn.png'],
+      note:'Do not use unless paired as a primary with subutai, and have a very strong delta set, with very stronger cav gear',
+      talents:'arthurtalents.png',
+      pairings:[['arthur.png','subutai.png','Arthur + Subutai']]
+    },
+    subutai:{name:'Subutai',role:'Cav Niche',img:'subutai.png',formation:'Delta',formationImg:'delta.png',
+      accessories:['horn.png','ring.png'],
+      note:'None',
+      pairings:[]
+    },
+    jan:{name:'Jan',role:'Cav Glock',img:'jan.png',formation:'Wedge',formationImg:'wedge.png',
+      accessories:['ring.png','horn.png'],
+      note:'None',
+      pairings:[['jan.png','attila.png','Jan + Attila']]
+    },
+    attila:{name:'Attila',role:'Cav Glock',img:'attila.png',formation:'Wedge',formationImg:'wedge.png',
+      accessories:['ring.png','horn.png'],
+      pairings:[]
+    },
+
+    // Archers
+    ashur:{name:'Ashur',role:'Archer S+',img:'ashur.png',formation:'Wedge',formationImg:'wedge.png',accessories:['horn.png','ring.png'],talents:'ashurtalentswarm.png',pairings:[
+      ['ashur.png','henry.png','Ashur + Henry'],
+      ['ashur.png','zhuge.png','Ashur + Zhuge'],
+      ['ashur.png','hermann.png','Ashur + Hermann']
+    ]},
+    henry:{name:'Henry',role:'Archer S+',img:'henry.png',formation:'Wedge',formationImg:'wedge.png',accessories:['ring.png','horn.png'],pairings:[]},
+    zhuge:{name:'Zhuge',role:'Archer S+',img:'zhuge.png',formation:'Wedge',formationImg:'wedge.png',accessories:['horn.png','ring.png'],talents:'zhugetalents.png',pairings:[
+      ['zhuge.png','ashur.png','Zhuge + Ashur'],
+      ['zhuge.png','hermann.png','Zhuge + Hermann'],
+      ['zhuge.png','henry.png','Zhuge + Henry']
+    ]},
+    shajar:{name:'Shajar',role:'Archer S+',img:'shajar.png',formation:'Wedge',formationImg:'wedge.png',accessories:['horn.png','ring.png'],talents:'shajartalents.png',pairings:[
+      ['shajar.png','ashur.png','Shajar + Ashur'],
+      ['shajar.png','henry.png','Shajar + Henry'],
+      ['shajar.png','zhuge.png','Shajar + ZL']
+    ]},
+    hermann:{name:'Hermann',role:'Archer S',img:'hermann.png',formation:'Wedge',formationImg:'wedge.png',accessories:['ring.png','horn.png'],pairings:[]},
+    qsh:{name:'QSH',role:'Archer Okay',img:'qsh.png',formation:'Wedge',formationImg:'wedge.png',accessories:['ring.png','horn.png','pendant.png'],pairings:[
+      ['qsh.png','ashur.png','QSH + Ashur'],
+      ['qsh.png','zhuge.png','QSH + ZL']
+    ]},
+    boudica:{name:'Boudica',role:'Archer Niche',img:'boudica.png',formation:'Wedge',formationImg:'wedge.png',accessories:['ring.png','horn.png'],talents:'boudicatalents.png',pairings:[
+      ['boudica.png','ashur.png','Boudica + Ashur'],
+      ['boudica.png','henry.png','Boudica + Henry'],
+      ['boudica.png','zhuge.png','Boudica + ZL']
+    ]},
+    tomy:{name:'Tomy',role:'Archer Niche',img:'tomy.png',formation:'Wedge',formationImg:'wedge.png',accessories:['horn.png','ring.png'],pairings:[]},
+    shapur:{name:'Shapur',role:'Archer Niche',img:'shapur.png',formation:'Wedge',formationImg:'wedge.png',accessories:['ring.png','horn.png'],talents:'shapurtalents.png',pairings:[
+      ['shapur.png','ashur.png','Shapur + Ashur'],
+      ['shapur.png','henry.png','Shapur + Henry'],
+      ['shapur.png','zhuge.png','Shapur + ZL'],
+      ['shapur.png','hermann.png','Shapur + Hermann']
+    ]}
+  };
+
+  // Track current commander key for toggle behavior
+  let currentCmdKey = null;
+  function hideCommanderDetails(){
+    const panel = document.getElementById('archer-details-panel');
+    if(panel){
+      panel.style.display='none';
+    }
+    currentCmdKey = null;
+    // Clear cmd from hash
+    try{
+      const params = new URLSearchParams(location.hash.slice(1));
+      params.delete('cmd');
+      history.replaceState(null,'','#'+params.toString());
+    }catch(e){}
+  }
+
+  // ===== DETAILS PANEL LOGIC =====
+  const imgEl=document.getElementById('archer-detail-img');
+  function showCommanderDetails(key){
+    const d=commanderData[key];
+    if(!d) return;
+    currentCmdKey = key;
+    imgEl.src=d.img;
+    imgEl.alt=d.name;
+    document.getElementById('archer-detail-name').textContent=d.name;
+    document.getElementById('archer-detail-role').textContent=d.role||'';
+
+    // Formation images (supports dual Pincer / Arch)
+    const formationBox=document.getElementById('archer-detail-formation-img-box');
+    const formationLabel=document.getElementById('archer-detail-formation-label');
+    formationLabel.textContent=d.formation||'';
+    if(d.formation && d.formation.includes('Pincer') && d.formation.includes('Arch')){
+      formationBox.innerHTML=`
+        <img src="pincer.png" alt="Pincer" style="width:82px;height:82px;object-fit:contain;">
+        <img src="arch.png" alt="Arch" style="width:82px;height:82px;object-fit:contain;">
+      `;
+    }else{
+      formationBox.innerHTML=`<img src="${d.formationImg||'wedge.png'}" alt="${d.formation||'Formation'}" style="width:82px;height:82px;object-fit:contain;">`;
+    }
+
+    const accBox=document.getElementById('detail-accessories-box');
+    accBox.innerHTML=(d.accessories||[]).map(a=>`<img src="${a}" alt="" style="width:60px;height:60px;border-radius:14px;background:#222;border:1px solid #333;">`).join('')||'<span style="font-size:.75rem;color:#778891;">None</span>';
+
+    // Notes (now visible)
+    const notesBox=document.getElementById('archer-detail-notes-box');
+    const notesEl=document.getElementById('archer-detail-notes');
+    if(notesBox && notesEl){
+      notesEl.textContent = d.note || 'None';
+      notesBox.style.display = '';
+    }
+
+    const talentsWrap=document.getElementById('archer-detail-talents');
+    if(d.talents){
+      talentsWrap.innerHTML=`<img src="${d.talents}" alt="Talents">`;
+    }else{
+      talentsWrap.innerHTML='<span style="color:#718088;font-size:.8rem;">No talents diagram added.</span>';
+    }
+
+    const pairList=document.getElementById('archer-pairings-list');
+    pairList.innerHTML=(d.pairings&&d.pairings.length)?d.pairings.map(p=>`
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="display:flex;gap:6px;">
+          <img src="${p[0]}" alt="" style="width:50px;height:50px;border-radius:12px;background:#222;border:2px solid #ffda55;">
+          <img src="${p[1]}" alt="" style="width:50px;height:50px;border-radius:12px;background:#222;border:2px solid #ffda55;">
+        </div>
+        <span style="font-size:.8rem;font-weight:600;color:#ffda55;">${p[2]}</span>
+      </div>`).join(''):'<span style="color:#778891;font-size:.75rem;">No pairings.</span>';
+
+    document.getElementById('archer-details-panel').style.display='block';
+    // Update hash with cmd
+    try{
+      const hash=location.hash.startsWith('#')?location.hash.slice(1):location.hash;
+      const params=new URLSearchParams(hash);
+      params.set('cmd', key);
+      history.replaceState(null,'', '#'+params.toString());
+    }catch(e){}
+    window.scrollTo({top:document.getElementById('archer-details-panel').offsetTop-40,behavior:'smooth'});
+  }
+
+  // ===== UNIVERSAL COMMANDER PORTRAIT INTERACTIVITY (robust binding) =====
+  function extractCmdKeyFromImg(img){
+    const src=(img.getAttribute('src')||'').split('/').pop();
+    const lower=src.toLowerCase();
+    return lower.replace(/\.(png|jpg|jpeg|gif|webp)$/,'');
+  }
+
+  function enhanceCommanderPortraits(){
+    document.querySelectorAll('.tier-commanders img').forEach(img=>{
+      img.classList.add('commander-portrait');
+      img.setAttribute('role','button');
+      img.setAttribute('tabindex','0');
+      if(!img.getAttribute('aria-label')) img.setAttribute('aria-label', img.alt || 'Commander');
+      const key=extractCmdKeyFromImg(img);
+      img.dataset.cmd=key;
+    });
+  }
+
+  (function setupDelegatedHandlers(){
+    const tip=document.getElementById('commander-tooltip');
+    document.addEventListener('click',(e)=>{
+      const img=e.target.closest('img.commander-portrait');
+      if(!img) return;
+      const key=img.dataset.cmd || extractCmdKeyFromImg(img);
+      const panel=document.getElementById('archer-details-panel');
+      const isOpen=panel && panel.style.display!=="none";
+      if(isOpen && currentCmdKey===key){
+        hideCommanderDetails();
+      }else{
+        showCommanderDetails(key);
+      }
+    },true);
+
+    document.addEventListener('keydown',(e)=>{
+      if(e.key!=='Enter' && e.key!==' ') return;
+      const img=e.target.closest('img.commander-portrait');
+      if(!img) return;
+      e.preventDefault();
+      img.click();
+    });
+
+    document.addEventListener('mouseover',(e)=>{
+      const img=e.target.closest('img.commander-portrait');
+      if(!img) return;
+      if(!tip) return;
+      tip.textContent=img.alt || img.getAttribute('aria-label') || '';
+      tip.style.display='block';
+    });
+    document.addEventListener('mousemove',(e)=>{
+      if(!tip || tip.style.display!=='block') return;
+      tip.style.left=e.pageX+15+'px';
+      tip.style.top=e.pageY+15+'px';
+    });
+    document.addEventListener('mouseout',(e)=>{
+      const img=e.target.closest('img.commander-portrait');
+      if(!img) return;
+      if(!tip) return;
+      tip.style.display='none';
+    });
+  })();
+
+  // Highlight current nav link
+  document.querySelectorAll('.main-nav a').forEach(a=>{
+    if(location.pathname.split('/').pop()===a.getAttribute('href')){
+      a.classList.add('active');
+    }
+  });
+
+  // TAB LOGIC (top-level tabs only with ARIA + hash)
+  document.querySelectorAll('.troop-tab-btn.primary-tab').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const target=btn.dataset.target;
+      document.querySelectorAll('.troop-tab-btn.primary-tab').forEach(b=>{
+        const isActive=(b===btn);
+        b.classList.toggle('active',isActive);
+        b.setAttribute('aria-selected', isActive?'true':'false');
+      });
+      ['infantry-content','cavalry-content','archers-content','setups-content'].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el) el.style.display = (id===target)?'block':'none';
+      });
+      // Hide details panel when switching top-level tabs
+      const panel=document.getElementById('archer-details-panel');
+      if(panel) panel.style.display='none';
+      currentCmdKey = null;
+      // Update hash
+      try{
+        const tabKey = target.replace('-content','');
+        const params=new URLSearchParams(location.hash.slice(1));
+        params.set('tab', tabKey);
+        if(tabKey!=="setups") params.delete('setup');
+        params.delete('cmd');
+        history.replaceState(null,'','#'+params.toString());
+      }catch(e){}
+      window.scrollTo({top:0,behavior:'smooth'});
+      enhanceCommanderPortraits();
+    });
+  });
+
+  // Add event listeners for the new "Setups" tab and its sub-tabs
+  document.getElementById('setups-tab').addEventListener('click', () => {
+    setSubTab('one-troop');
+  });
+
+  const subTabs = ['one-troop', 'two-troop', 'three-troop'];
+  subTabs.forEach(subTab => {
+    const el=document.getElementById(`${subTab}-tab`);
+    if(el){
+      el.addEventListener('click', () => {
+        setSubTab(subTab);
+        // update hash for setup sub tab
+        try{
+          const params=new URLSearchParams(location.hash.slice(1));
+          params.set('tab','setups');
+          params.set('setup', subTab.split('-')[0]);
+          history.replaceState(null,'','#'+params.toString());
+        }catch(e){}
+        enhanceCommanderPortraits();
+      });
+    }
+  });
+
+  function setSubTab(subTab) {
+    subTabs.forEach(id => {
+      const content = document.getElementById(`${id}-content`);
+      const button = document.getElementById(`${id}-tab`);
+      if (content) content.style.display = id === subTab ? 'block' : 'none';
+      if (button){
+        const active = id === subTab;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-selected', active?'true':'false');
+      }
+    });
+  }
+
+  // Deep link: apply hash on load
+  (function applyHash(){
+    const raw=location.hash.slice(1);
+    if(!raw) {
+      enhanceCommanderPortraits();
+      return;
+    }
+    const params=new URLSearchParams(raw);
+    const tab=params.get('tab');
+    const setup=params.get('setup');
+    const cmd=params.get('cmd');
+    if(tab){
+      const btn=document.querySelector(`.troop-tab-btn.primary-tab[data-target="${tab}-content"]`);
+      if(btn) btn.click();
+    }
+    if(setup){
+      setSubTab(`${setup}-troop`);
+    }
+    enhanceCommanderPortraits();
+    if(cmd && commanderData[cmd]){
+      showCommanderDetails(cmd);
+    }
+  })();
+
+  </script>
+</body>
+</html>

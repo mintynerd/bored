@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credits - Ultimate Swarming Guide</title>
+    <link rel="stylesheet" href="main.css">
+    <style>
+      :root{
+        --bg:#050b11;
+        --bg-accent:radial-gradient(circle at 72% 18%,rgba(63,191,248,.18),transparent 60%),
+                     radial-gradient(circle at 18% 86%,rgba(255,213,74,.14),transparent 65%),
+                     linear-gradient(140deg,#081520,#0d1d2b 55%,#0b1622);
+        --panel:rgba(16,30,44,.85);
+        --panel-border:rgba(255,255,255,.08);
+        --panel-glow:0 10px 34px -12px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.04);
+        --text:#ecf4ff;--muted:#8ea5bd;--accent:#3fbff8;--accent-warm:#ffd54a;--danger:#ff6b5c;
+        font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+      }
+      body{margin:0;background:var(--bg);background-image:var(--bg-accent);color:var(--text);-webkit-font-smoothing:antialiased;}
+      header{padding:56px 18px 34px;text-align:center;}
+      header h1{margin:0 0 14px;font-size:clamp(38px,4.5vw,64px);font-weight:700;background:linear-gradient(90deg,var(--accent),var(--accent-warm) 65%,#ff9f4d);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 18px rgba(63,191,248,.25));letter-spacing:.6px;}
+      header p{margin:0 0 26px;font-size:.95rem;color:var(--muted);} 
+      nav.site-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:0 0 6px;padding:0;}
+      nav.site-nav a{text-decoration:none;background:rgba(255,255,255,.05);color:var(--muted);padding:8px 18px 9px;font-size:.74rem;font-weight:600;border:1px solid var(--panel-border);border-radius:11px;transition:.22s;letter-spacing:.4px;}
+      nav.site-nav a:hover{background:rgba(255,255,255,.12);color:var(--text);} 
+      nav.site-nav a.active{background:linear-gradient(145deg,var(--accent-warm),#ff9f2d);color:#1d1500;border-color:var(--accent-warm);box-shadow:0 4px 14px -4px rgba(255,185,40,.55);} 
+      .credits-shell{max-width:600px;margin:0 auto 90px;padding:50px clamp(24px,6vw,70px) 56px;background:var(--panel);backdrop-filter:blur(16px) saturate(140%);border:1px solid var(--panel-border);border-radius:34px;box-shadow:var(--panel-glow);position:relative;overflow:hidden;text-align:center;}
+      .credits-shell::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 32% 18%,rgba(63,191,248,.18),transparent 65%),radial-gradient(circle at 78% 82%,rgba(255,213,74,.16),transparent 65%);pointer-events:none;}
+      .credits-shell h2{margin:0 0 34px;font-size:1.9rem;background:linear-gradient(90deg,var(--accent),var(--accent-warm));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.6px;}
+      .credits-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:16px;}
+      .credits-list li{font-size:1.15rem;font-weight:600;letter-spacing:.5px;background:linear-gradient(145deg,#142231,#0d1a24);border:1px solid rgba(255,255,255,.07);padding:14px 18px;border-radius:18px;color:var(--accent-warm);box-shadow:0 4px 14px -8px rgba(0,0,0,.55);}
+      .credits-list li:nth-child(odd){color:var(--accent);} 
+      @media (max-width:680px){header{padding:50px 16px 32px;}.credits-shell{padding:44px 28px 54px;border-radius:28px;}}
+
+      /* Unified modern password overlay */
+      #password-overlay{position:fixed;z-index:9999;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(5,11,17,.92);backdrop-filter:blur(14px) saturate(150%);} 
+      #password-form{background:linear-gradient(155deg,#132331,#101d29);border:1px solid var(--panel-border);box-shadow:var(--panel-glow);border-radius:24px !important;padding:48px 44px !important;font-family:inherit;display:flex;flex-direction:column;gap:12px;align-items:stretch;}
+      #password-form label{color:var(--accent-warm) !important;font-weight:600;}
+      #password-form input{background:#172b3a !important;border:1px solid rgba(255,255,255,.12) !important;color:var(--text) !important;border-radius:10px !important;padding:.8rem 1rem !important;font-size:.95rem !important;transition:.25s;}
+      #password-form input:focus{outline:none;border-color:var(--accent) !important;box-shadow:0 0 0 3px rgba(63,191,248,.35);} 
+      #password-form button{background:linear-gradient(90deg,var(--accent),#1f8cc1);border:none;border-radius:12px;font-weight:600;letter-spacing:.5px;font-size:.95rem;padding:.85rem 1.4rem;margin-top:.25rem;cursor:pointer;transition:.25s;color:#fff;}
+      #password-form button:hover{filter:brightness(1.07);} 
+      #password-error{color:var(--danger) !important;font-size:.8rem !important;}
+    </style>
+</head>
+<body>
+    <!-- Unified Password Overlay -->
+    <div id="password-overlay">
+        <form id="password-form" autocomplete="off">
+            <label for="password">Enter password to view the guide:</label>
+            <input type="password" id="password" autofocus>
+            <button type="submit">Enter</button>
+            <div id="password-error" style="display:none;">Incorrect password. Try again.</div>
+        </form>
+    </div>
+    <header>
+        <h1>Credits</h1>
+        <p>Ultimate Swarming Guide</p>
+        <nav class="site-nav" aria-label="Main">
+          <a href="starters.html">Starters</a>
+          <a href="gear.html">Gear</a>
+          <a href="commanders.html">Commanders</a>
+          <a href="keypoints.html">Key Points</a>
+          <a href="warleading.html">Warleading</a>
+          <a href="defense.html">Defense</a>
+          <a href="credits.html" class="active">Credits</a>
+        </nav>
+    </header>
+    <main>
+        <div class="credits-shell">
+            <h2>Credits</h2>
+            <ul class="credits-list">
+                <li>Ghostrider</li>
+                <li>Seif )</li>
+                <li>Hunter</li>
+                <li>Xbene</li>
+                <li>My mom</li>
+            </ul>
+        </div>
+    </main>
+    <script>
+        // Password protection with localStorage (unified)
+        (function(){
+          const PASSWORD = "SeifStinks123";
+          const overlay = document.getElementById('password-overlay');
+          const form = document.getElementById('password-form');
+          const input = document.getElementById('password');
+          const error = document.getElementById('password-error');
+          let attempts = 0;
+          try{
+            if (localStorage.getItem('swarmGuideAccess') === 'true') {
+                overlay.style.display = 'none';
+            }
+          }catch(e){}
+          form.addEventListener('submit', function(e) {
+              e.preventDefault();
+              if (input.value === PASSWORD) {
+                  overlay.style.display = 'none';
+                  try{localStorage.setItem('swarmGuideAccess', 'true');}catch(e){}
+              } else {
+                  attempts++;
+                  error.style.display = 'block';
+                  input.value = '';
+                  input.focus();
+                  if (attempts >= 10) {
+                    overlay.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#fff;font-size:2rem;font-weight:600;">Access denied.</div>';
+                  }
+              }
+          });
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Handling being swarmed - Ultimate Swarming Guide</title>
+  <link rel="stylesheet" href="main.css">
+  <style>
+    :root{
+      --bg:#050b11;
+      --bg-accent:radial-gradient(circle at 70% 20%,rgba(33,118,255,.18),transparent 55%),
+                   radial-gradient(circle at 20% 80%,rgba(255,200,40,.15),transparent 60%),
+                   linear-gradient(140deg,#081520,#0d1d2b 55%,#0b1622);
+      --panel:rgba(16,30,44,.85);
+      --panel-border:rgba(255,255,255,.08);
+      --panel-glow:0 10px 34px -12px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.04);
+      --text:#ecf4ff;
+      --muted:#8ea5bd;
+      --accent:#3fbff8;
+      --accent-warm:#ffd54a;
+      --danger:#ff6b5c;
+      --radius:22px;
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:var(--bg);background-image:var(--bg-accent);color:var(--text);-webkit-font-smoothing:antialiased}
+
+    header{padding:64px 18px 38px;text-align:center;position:relative}
+    header h1{margin:0 0 10px;font-size:clamp(42px,4.8vw,66px);font-weight:800;letter-spacing:.6px;background:linear-gradient(90deg,var(--accent),var(--accent-warm) 65%,#ff9f4d);-webkit-background-clip:text;color:transparent;filter:drop-shadow(0 6px 20px rgba(63,191,248,.25));background-clip:text;}
+    header p{margin:0 0 26px;font-size:.98rem;color:var(--muted)}
+
+    nav.site-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:0 0 6px;padding:0}
+    nav.site-nav a{text-decoration:none;background:rgba(255,255,255,.05);color:var(--muted);padding:9px 18px;font-size:.78rem;font-weight:700;border:1px solid var(--panel-border);border-radius:12px;transition:.22s;letter-spacing:.45px;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+    nav.site-nav a:hover{background:rgba(255,255,255,.12);color:#fff}
+    nav.site-nav a.active{background:linear-gradient(145deg,var(--accent-warm),#ff9f2d);color:#1d1500;border-color:var(--accent-warm);box-shadow:0 6px 20px -8px rgba(255,185,40,.55)}
+
+    main{max-width:1300px;margin:0 auto 80px;padding:0 clamp(22px,4vw,70px)}
+
+    .defense-shell{max-width:1100px;margin:0 auto;background:var(--panel);backdrop-filter:blur(16px) saturate(140%);border:1px solid var(--panel-border);border-radius:34px;padding:48px clamp(22px,4vw,60px) 56px;box-shadow:var(--panel-glow);position:relative;overflow:hidden}
+    .defense-shell::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 18%,rgba(63,191,248,.18),transparent 65%),radial-gradient(circle at 82% 82%,rgba(255,213,74,.16),transparent 65%);pointer-events:none}
+
+    .section-title{margin:0 0 18px;font-size:1.9rem;background:linear-gradient(90deg,var(--accent),var(--accent-warm));-webkit-background-clip:text;color:transparent;letter-spacing:.6px;text-align:center}
+    .intro{margin:0 auto 28px;max-width:860px;color:var(--muted);text-align:center;line-height:1.55}
+
+    .tip-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;max-width:980px;margin:0 auto}
+    .tip{grid-column:span 12;background:rgba(8,20,32,.6);border:1px solid var(--panel-border);border-radius:18px;padding:18px 18px;box-shadow:0 2px 10px rgba(0,0,0,.45)}
+    .tip h3{margin:0 0 8px;font-size:1.05rem;letter-spacing:.4px;color:var(--accent-warm)}
+    .tip p{margin:0;color:var(--muted);line-height:1.55}
+    .tip ul{margin:.4rem 0 0 1.1rem;color:var(--muted)}
+    .tip li{margin:.28rem 0}
+
+    .callout{margin:28px auto 0;max-width:980px;background:linear-gradient(110deg,rgba(63,191,248,.12),rgba(255,213,74,.12));border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px 18px;color:#cfe1f2;box-shadow:0 0 0 1px rgba(255,255,255,.04)}
+
+    /* Unified password overlay */
+    #password-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(5,11,17,.92);backdrop-filter:blur(14px) saturate(150%);z-index:9999}
+    #password-form{background:linear-gradient(155deg,#132331,#101d29);border:1px solid var(--panel-border);box-shadow:var(--panel-glow);border-radius:24px !important;padding:48px 44px !important;font-family:inherit;display:flex;flex-direction:column;gap:12px;align-items:stretch}
+    #password-form label{color:var(--accent-warm) !important;font-weight:600}
+    #password-form input{background:#172b3a !important;border:1px solid rgba(255,255,255,.12) !important;color:var(--text) !important;border-radius:10px !important;padding:.8rem 1rem !important;font-size:.95rem !important;transition:.25s}
+    #password-form input:focus{outline:none;border-color:var(--accent) !important;box-shadow:0 0 0 3px rgba(63,191,248,.35)}
+    #password-form button{background:linear-gradient(90deg,var(--accent),#1f8cc1);border:none;border-radius:12px;font-weight:600;letter-spacing:.5px;font-size:.95rem;padding:.85rem 1.4rem;margin-top:.25rem;cursor:pointer;transition:.25s;color:#fff}
+    #password-form button:hover{filter:brightness(1.07)}
+    #password-error{color:var(--danger) !important;font-size:.8rem !important}
+
+    @media (max-width:900px){
+      .tip-grid{gap:14px}
+      .tip{padding:16px}
+    }
+    @media (max-width:680px){
+      header{padding:54px 16px 30px}
+      .defense-shell{padding:40px 20px 48px;border-radius:28px}
+      .tip-grid{grid-template-columns:repeat(6,1fr)}
+      .tip{grid-column:span 6}
+    }
+
+    /* Tabs styling for Defense page */
+    .tabs-bar{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:0 0 18px}
+    .tab-btn{appearance:none;-webkit-appearance:none;border:none;cursor:pointer;padding:10px 16px;border-radius:12px;font-weight:700;letter-spacing:.4px;font-size:.9rem;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--panel-border);box-shadow:0 2px 6px rgba(0,0,0,.35);transition:.22s}
+    .tab-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+    .tab-btn[aria-selected="true"]{background:linear-gradient(145deg,var(--accent-warm),#ff9f2d);color:#1d1500;border-color:var(--accent-warm);box-shadow:0 6px 20px -8px rgba(255,185,40,.55)}
+
+    /* Panels */
+    [role="tabpanel"]{outline:none}
+
+    /* Sub-tabs for Garrisons */
+    .subtabs-bar{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:10px 0 16px}
+    .subtab-btn{appearance:none;-webkit-appearance:none;border:none;cursor:pointer;padding:8px 14px;border-radius:10px;font-weight:700;letter-spacing:.35px;font-size:.85rem;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--panel-border);box-shadow:0 2px 6px rgba(0,0,0,.35);transition:.22s}
+    .subtab-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+    .subtab-btn[aria-selected="true"]{background:linear-gradient(145deg,var(--accent),#1f8cc1);color:#00131d;border-color:var(--accent);box-shadow:0 6px 18px -8px rgba(63,191,248,.5)}
+
+    /* Hard fill reaction game */
+    .hf-stage{
+      display:flex;align-items:center;justify-content:center;
+      height:220px;border:1px solid var(--panel-border);border-radius:18px;
+      background:rgba(8,20,32,.6);box-shadow:0 2px 10px rgba(0,0,0,.45);
+      font-weight:800;letter-spacing:.3px;font-size:1.1rem;transition:background .08s ease, transform .04s ease;
+    }
+    .hf-stage:active{transform:translateY(1px)}
+    .hf-wait{background:linear-gradient(180deg,#271c0a,#2c1b10)}
+    .hf-ready{background:linear-gradient(180deg,#0e2a16,#10331b)}
+    .hf-false{background:linear-gradient(180deg,#3b1212,#2a0e0e)}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  </style>
+</head>
+<body>
+  <!-- Password Overlay -->
+  <div id="password-overlay">
+    <form id="password-form" autocomplete="off">
+      <label for="password">Enter password to view the guide:</label>
+      <input id="password" type="password" autofocus>
+      <button type="submit">Enter</button>
+      <div id="password-error" style="display:none;">Incorrect password. Try again.</div>
+    </form>
+  </div>
+
+  <script>
+    (function(){
+      const PASSWORD = 'SeifStinks123';
+      const KEY = 'swarmGuideAccess';
+      const overlay = document.getElementById('password-overlay');
+      const form = document.getElementById('password-form');
+      const input = document.getElementById('password');
+      const error = document.getElementById('password-error');
+
+      // Auto-unlock if already validated
+      try {
+        if (localStorage.getItem(KEY) === 'true') {
+          overlay.style.display = 'none';
+          return;
+        }
+      } catch (e) {}
+
+      if (form) {
+        form.addEventListener('submit', function(e){
+          e.preventDefault();
+          if (input && input.value === PASSWORD) {
+            try { localStorage.setItem(KEY, 'true'); } catch (e) {}
+            overlay.style.display = 'none';
+          } else {
+            if (error) error.style.display = 'block';
+            if (input) { input.value = ''; input.focus(); }
+          }
+        });
+      }
+    })();
+  </script>
+
+  <header>
+    <h1>Handling being swarmed</h1>
+    <p>Ultimate Swarming Guide</p>
+    <nav class="site-nav" aria-label="Main">
+      <a href="starters.html">Starters</a>
+      <a href="gear.html">Gear</a>
+      <a href="commanders.html">Commanders</a>
+      <a href="keypoints.html">Key Points</a>
+      <a href="warleading.html">Warleading</a>
+      <a href="defense.html" class="active">Defense</a>
+      <a href="credits.html">Credits</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="defense-shell">
+      <div class="tabs-bar" role="tablist" aria-label="Defense views">
+        <button class="tab-btn" role="tab" id="tab-basics" aria-controls="panel-basics" aria-selected="true" tabindex="0">Objectives</button>
+        <button class="tab-btn" role="tab" id="tab-garrisons" aria-controls="panel-garrisons" aria-selected="false" tabindex="-1">Best Garrisons</button>
+        <!-- Removed Tech Impact tab -->
+        <button class="tab-btn" role="tab" id="tab-hardfill" aria-controls="panel-hardfill" aria-selected="false" tabindex="-1">Can you hard fill</button>
+      </div>      <section id="panel-basics" role="tabpanel" aria-labelledby="tab-basics">
+        <h2 class="section-title">Objectives</h2>
+        <p class="intro">Your main objectives while defending are to punish rallies and swarms hard, and prevent easy burns or collapses.</p>
+
+        <div class="tip-grid">
+          <section class="tip" aria-labelledby="pos-title">
+            <h3 id="pos-title">Objectives as a defender</h3>
+            <ul>
+              <li>You want to punish your enemy hard on their rallies and swarms as hard as possible (which gives you a mental edge vs them) </li>
+              <li>You want to defend/hold your structure (or survive) & not give easy or free burns (the longer you hold, enemies tend to get tilted/demotivated)</li>
+            </ul>
+          </section>
+
+          <section class="tip" aria-labelledby="gear-title">
+            <h3 id="gear-title">Swarming Rallies</h3>
+            <ul>
+              <li>Swarming down a rally (succesfully) vs most enemies in the game stops a flag attack almost immediately since most kingdoms do not swarm flags without rallies.</li>
+              <li>Pre-positioning marches in cities nearby to a flag rally and calling on voice and swarming the rally together is the best way to do this</li>
+              <li>If you do it consistently an enemy begins using shitty (antiswarm) rallies, or completely ignores rallying a flag (even if it may be important).</li>
+            </ul>
+          </section>
+
+    
+        </div>
+
+        
+      </section>
+
+      <section id="panel-garrisons" role="tabpanel" aria-labelledby="tab-garrisons" hidden>
+        <h2 class="section-title">Best garrisons when under swarm</h2>
+        <p class="intro">Choose pairs that punish stacks and survive burst. Prioritize constant debuffs, counterattack pressure, and reliable rage flow.</p>
+
+        <div class="subtabs-bar" role="list" aria-label="Garrison builds">
+          <button class="subtab-btn comm-btn" data-id="max-punish" role="listitem" aria-selected="true">Max Punish</button>
+          <button class="subtab-btn comm-btn" data-id="max-survival" role="listitem" aria-selected="false">Max Survival</button>
+        </div>
+
+        <div id="garrison-detail" class="detail-panel" hidden>
+          <div class="detail-header" style="display:flex;gap:12px;align-items:center;margin:0 0 8px">
+            <img id="detail-img" src="" alt="" style="width:52px;height:52px;border-radius:50%;border:1px solid var(--panel-border);display:none">
+            <div>
+              <h3 id="detail-name" style="margin:.1rem 0 .2rem">—</h3>
+              <div id="detail-tier" class="tier-badge" style="display:inline-block;padding:2px 8px;border-radius:10px;border:1px solid var(--panel-border);font-size:.8rem;background:rgba(255,255,255,.06)">Focus —</div>
+            </div>
+          </div>
+          <p id="detail-notes" class="intro" style="text-align:left;margin:0;color:var(--muted)"></p>
+          <div id="detail-leaderboard" class="leaderboard" style="margin-top:14px;display:none"></div>
+
+          <!-- Removed: clickable pair-detail build panel -->
+          <!-- <div id="pair-detail"> ... </div> -->
+        </div>
+      </section>
+
+      <section id="panel-hardfill" role="tabpanel" aria-labelledby="tab-hardfill" hidden>
+        <h2 class="section-title">Can you hard fill?</h2>
+        <p class="intro">A fast reaction drill. Wait for the panel to turn green, then click or press Space/Enter as fast as you can.</p>
+
+        <div class="hf-shell" style="max-width:880px;margin:0 auto">
+          <div id="hf-stage" class="hf-stage hf-idle" role="button" tabindex="0" aria-label="Reaction stage. Click when it turns green." style="user-select:none;">
+            <span id="hf-stage-text">Click Start</span>
+          </div>
+
+          <div class="hf-stats" style="display:flex;gap:18px;justify-content:center;margin:12px 0 0;color:var(--muted)">
+            <div>Last: <strong id="hf-last">—</strong> ms</div>
+            <div>Best: <strong id="hf-best">—</strong> ms</div>
+            <div>Attempts: <strong id="hf-attempts">0</strong></div>
+          </div>
+
+          <div class="hf-ctrls" style="display:flex;gap:10px;justify-content:center;margin-top:14px">
+            <button id="hf-start" class="subtab-btn" type="button">Start</button>
+            <button id="hf-reset" class="subtab-btn" type="button">Reset best</button>
+          </div>
+
+          <div id="hf-feedback" class="callout" role="status" style="display:none;text-align:center;margin-top:12px"></div>
+
+          <section id="hf-leaderboard" class="tip" style="margin-top:14px;display:none">
+            <h3 style="margin:0 0 8px">Reaction Leaderboard</h3>
+            <ol id="hf-times" style="list-style:none;margin:0;padding:0;display:grid;gap:8px"></ol>
+          </section>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // Clean tabs + garrisons controller (replaces the corrupted block at the end)
+    document.addEventListener('DOMContentLoaded', function () {
+      setupTabs();
+      setupGarrisons();
+      setupHardfillGame(); // new
+    });
+
+    function setupTabs() {
+      const tabs = Array.from(document.querySelectorAll('.tab-btn[role="tab"]'));
+      const panels = Array.from(document.querySelectorAll('[role="tabpanel"][id^="panel-"]'));
+      if (!tabs.length || !panels.length) return;
+
+      const idToKey = (id) => id.replace('tab-', '');
+      const valid = tabs.map(t => idToKey(t.id));
+
+      function activate(key) {
+        if (!valid.includes(key)) return;
+        tabs.forEach(t => {
+          const sel = idToKey(t.id) === key;
+          t.setAttribute('aria-selected', sel ? 'true' : 'false');
+          t.tabIndex = sel ? 0 : -1;
+        });
+        panels.forEach(p => { p.hidden = (p.id !== 'panel-' + key); });
+        // Keep simple hashes for main tabs
+        if (!key.startsWith('garrisons-') && location.hash.slice(1) !== key) {
+          history.replaceState(null, '', '#' + key);
+        }
+      }
+
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.tab-btn[role="tab"]');
+        if (!btn) return;
+        activate(idToKey(btn.id));
+      });
+
+      // Init from hash
+      const h = location.hash.slice(1);
+      if (valid.includes(h)) {
+        activate(h);
+      } else if (h === 'garrisons' || h.startsWith('garrisons-')) {
+        activate('garrisons');
+      } else {
+        activate('basics');
+      }
+
+      // Keep tab in sync if hash changes to a main tab
+      window.addEventListener('hashchange', () => {
+        const nh = location.hash.slice(1);
+        if (valid.includes(nh)) activate(nh);
+        if (nh === 'garrisons' || nh.startsWith('garrisons-')) {
+          activate('garrisons');
+        }
+      });
+    }
+
+    function setupGarrisons() {
+      const outerTab = document.getElementById('tab-garrisons');
+      const panel = document.getElementById('panel-garrisons');
+      if (!outerTab || !panel) return;
+
+      const detail = panel.querySelector('#garrison-detail');
+      const dImg = panel.querySelector('#detail-img');
+      const dName = panel.querySelector('#detail-name');
+      const dTier = panel.querySelector('#detail-tier');
+      const dNotes = panel.querySelector('#detail-notes');
+      const dLB = panel.querySelector('#detail-leaderboard'); // leaderboard container
+      const buttons = Array.from(panel.querySelectorAll('.comm-btn'));
+
+      const DATA = {
+        'max-punish': {
+          name: 'Max Punish (anti-swarm AF)',
+          focus: 'Punish enemy swarmers',
+          bullets: [
+            'Goal: Making the enemy swarming marches regret swarming.',
+            'Execution: Must be kept full (with farms and later in kvk mains)',
+            'Need best of the best captains for this'
+          ],
+          leaderboard: [
+            { title: 'Gorgo + Martel OR Cy + Hera', img: [['gorgocm.png','cm.png'], ['cyhera.png','hera yss.png']] },
+            { title: 'Gorgo + Hera',                 img: ['gorgocm.png','hera yss.png'] },
+            { title: 'Gorgo + Tokugawa',             img: ['gorgocm.png','toku.png'] },
+            { title: 'Hera + Yss',                   img: ['hera yss.png','yss.png'] },
+            { title: 'Eleanor + Hera',               img: ['eleanorhera.png','hera yss.png'] }
+          ]
+        },
+        'max-survival': {
+          name: 'Max Survival (tank/sustain)',
+          focus: 'Survival',
+          bullets: [
+            'Goal: deny burns and buy time under heavy pressure.',
+            'Traits: flat damage reduction, heal-over-time, cleanse, and rage stability.',
+            'Execution: stable reinf cadence, avoid unnecessary swaps, maintain defense/HP city buffs.',
+            'Counter-swarm only during enemy downtime; otherwise hold and rotate.'
+          ],
+          leaderboard: [
+            { title: 'Gorgo + Hera OR Cy + Hera', img: [ ['gorgocm.png','hera yss.png'], ['cyhera.png','hera yss.png'] ] },
+            { title: 'Gorgo + Martel',            img: ['gorgocm.png','cm.png'] },
+            { title: 'Gorgo + Tokugawa',          img: ['gorgocm.png','toku.png'] },
+            { title: 'Hera + Yss',                img: ['hera yss.png','yss.png'] },
+            { title: 'Eleanor + Hera',            img: ['eleanorhera.png','hera yss.png'] }
+          ]
+        }
+      };
+
+      function setActiveButton(id) {
+        buttons.forEach(b => b.setAttribute('aria-selected', b.dataset.id === id ? 'true' : 'false'));
+      }
+
+      function renderLeaderboard(it, key) {
+        if (!dLB) return;
+        if (!it.leaderboard) {
+          dLB.style.display = 'none';
+          dLB.innerHTML = '';
+          return;
+        }
+
+        const escapeAttr = (s) => String(s).replace(/"/g, '&quot;');
+        const fileAlt = (f) => escapeAttr(f.replace(/\.[a-z0-9]+$/i,'').replace(/[-_]/g,' '));
+
+        const renderPair = (files) => {
+          const imgsHtml = files.map(src =>
+            `<img src="${encodeURI(src)}" alt="${fileAlt(src)}" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--panel-border);background:#0c1823;object-fit:cover">`
+          ).join('<span style="width:6px"></span>');
+          return `<span style="display:inline-flex;align-items:center;gap:6px">${imgsHtml}</span>`;
+        };
+
+        const renderImgs = (imgSpec) => {
+          if (Array.isArray(imgSpec) && imgSpec.length && Array.isArray(imgSpec[0])) {
+            return imgSpec.map(renderPair).join('<span style="margin:0 8px;color:var(--muted);font-weight:700">or</span>');
+          }
+          return renderPair(Array.isArray(imgSpec) ? imgSpec : [imgSpec]);
+        };
+
+        const rows = it.leaderboard.map((entry, idx) => `
+          <li style="display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--panel-border);border-radius:12px;background:rgba(8,20,32,.55)">
+            <div style="min-width:28px;text-align:center;font-weight:800;color:var(--accent-warm)">#${idx+1}</div>
+            <div style="display:flex;align-items:center;gap:10px">${renderImgs(entry.img)}</div>
+            <div style="font-weight:700;letter-spacing:.2px">${entry.title}</div>
+          </li>
+        `).join('');
+
+        const headerTitle = key === 'max-survival' ? 'Max Survival Leaderboard' : 'Max Punish Leaderboard';
+
+        dLB.innerHTML = `
+          <h4 style="margin:.4rem 0 .4rem;font-size:1rem;color:var(--accent)">${headerTitle}</h4>
+          <ol style="list-style:none;margin:0;padding:0;display:grid;gap:10px">${rows}</ol>
+          <div class="callout" role="note" style="margin-top:12px">
+            <strong>Note for Cy garrisons:</strong> For Cy garrisons you need to have arch formation for your archers, or its not going to work.
+          </div>`;
+        dLB.style.display = 'block';
+      }
+
+      function showDetail(id) {
+        const it = DATA[id];
+        if (!it) return;
+        dImg.style.display = 'none';
+        dName.textContent = it.name;
+        dTier.textContent = 'Focus: ' + it.focus;
+        dNotes.innerHTML = '<ul style="margin:.4rem 0 0 1.1rem">' +
+          it.bullets.map(li => '<li>' + li + '</li>').join('') +
+          '</ul>';
+        renderLeaderboard(it, id); // pass the current key for dynamic header and note
+        detail.hidden = false;
+        setActiveButton(id);
+        const deep = 'garrisons-' + id;
+        if (location.hash.slice(1) !== deep) {
+          history.replaceState(null, '', '#' + deep);
+        }
+      }
+
+      panel.addEventListener('click', (e) => {
+        const btn = e.target.closest('.comm-btn');
+        if (!btn) return;
+        if (outerTab.getAttribute('aria-selected') !== 'true') outerTab.click();
+        showDetail(btn.dataset.id);
+      });
+
+      // Deep-link init
+      const h = location.hash.slice(1);
+      if (h === 'garrisons') {
+        if (outerTab.getAttribute('aria-selected') !== 'true') outerTab.click();
+        showDetail('max-punish');
+      } else if (h.startsWith('garrisons-')) {
+        const id = h.replace('garrisons-', '');
+        if (outerTab.getAttribute('aria-selected') !== 'true') outerTab.click();
+        if (DATA[id]) showDetail(id); else showDetail('max-punish');
+      } else {
+        showDetail('max-punish');
+      }
+
+      window.addEventListener('hashchange', () => {
+        const nh = location.hash.slice(1);
+        if (nh === 'garrisons') return;
+        if (nh.startsWith('garrisons-')) {
+          const id = nh.replace('garrisons-', '');
+          if (outerTab.getAttribute('aria-selected') !== 'true') outerTab.click();
+          if (DATA[id]) showDetail(id);
+        }
+      });
+    }
+
+    function setupHardfillGame(){
+      const panel = document.getElementById('panel-hardfill');
+      if (!panel) return;
+
+      const stage = panel.querySelector('#hf-stage');
+      const stageText = panel.querySelector('#hf-stage-text');
+      const btnStart = panel.querySelector('#hf-start');
+      const btnReset = panel.querySelector('#hf-reset');
+      const lastEl = panel.querySelector('#hf-last');
+      const bestEl = panel.querySelector('#hf-best');
+      const attemptsEl = panel.querySelector('#hf-attempts');
+      const feedback = panel.querySelector('#hf-feedback');
+      const lb = panel.querySelector('#hf-leaderboard');
+      const lbList = panel.querySelector('#hf-times');
+
+      const BEST_KEY = 'hardfillBest';
+      const ATTEMPTS_KEY = 'hardfillAttempts';
+      const TIMES_KEY = 'hardfillTimes';
+
+      let timeout = null;
+      let startAt = 0;
+      let clickable = false;
+      let waiting = false;
+
+      // init scores
+      let best = Number(localStorage.getItem(BEST_KEY)) || null;
+      let attempts = Number(localStorage.getItem(ATTEMPTS_KEY)) || 0;
+      let times;
+      try { times = JSON.parse(localStorage.getItem(TIMES_KEY) || '[]'); if (!Array.isArray(times)) times = []; }
+      catch { times = []; }
+
+      bestEl.textContent = best ? best : '—';
+      attemptsEl.textContent = attempts;
+
+      function renderTimes(){
+        if (!lbList) return;
+        const sorted = [...times].sort((a,b)=>a-b);
+        lbList.innerHTML = sorted.map((ms,i)=> `
+          <li style="display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--panel-border);border-radius:10px;background:rgba(8,20,32,.55)">
+            <strong style="min-width:28px;text-align:center;color:var(--accent-warm)">#${i+1}</strong>
+            <span>${Math.round(ms)} ms</span>
+          </li>
+        `).join('');
+        lb.style.display = sorted.length ? 'block' : 'none';
+      }
+      renderTimes();
+
+      function resetStage(className='hf-idle', text='Click Start'){
+        stage.className = 'hf-stage ' + className;
+        stageText.textContent = text;
+        clickable = false;
+        waiting = false;
+        clearTimeout(timeout);
+        timeout = null;
+      }
+
+      function scheduleGo(){
+        waiting = true;
+        stage.className = 'hf-stage hf-wait';
+        stageText.textContent = 'Wait… (turns green)';
+        feedback.style.display = 'none';
+        const delay = 900 + Math.floor(Math.random()*1800);
+        timeout = setTimeout(() => {
+          startAt = performance.now();
+          clickable = true;
+          waiting = false;
+          stage.className = 'hf-stage hf-ready';
+          stageText.textContent = 'Click!';
+        }, delay);
+      }
+
+      function record(ms){
+        lastEl.textContent = ms.toFixed(0);
+        attempts += 1;
+        attemptsEl.textContent = attempts;
+        try { localStorage.setItem(ATTEMPTS_KEY, String(attempts)); } catch {}
+        // store run
+        times.push(ms);
+        try { localStorage.setItem(TIMES_KEY, JSON.stringify(times)); } catch {}
+        renderTimes();
+        // best
+        if (!best || ms < best){
+          best = Math.round(ms);
+          bestEl.textContent = best;
+          try { localStorage.setItem(BEST_KEY, String(best)); } catch {}
+        }
+        // boomer msg
+        if (ms > 400){
+          feedback.textContent = 'Wow you a boomer';
+          feedback.style.display = 'block';
+          feedback.style.color = 'var(--danger)';
+        } else {
+          feedback.textContent = 'Clean fill!';
+          feedback.style.display = 'block';
+          feedback.style.color = 'var(--accent)';
+        }
+      }
+
+      function onPress(){
+        if (!panel || panel.hidden) return;
+        if (waiting){
+          resetStage('hf-false','Too soon! Press Start');
+          return;
+        }
+        if (!clickable) return;
+        const ms = performance.now() - startAt;
+        record(ms);
+        resetStage('hf-idle','Nice! Press Start to try again');
+      }
+
+      btnStart.addEventListener('click', () => {
+        resetStage();
+        scheduleGo();
+      });
+
+      btnReset.addEventListener('click', () => {
+        best = null;
+        bestEl.textContent = '—';
+        localStorage.removeItem(BEST_KEY);
+      });
+
+      stage.addEventListener('click', onPress);
+      stage.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' || e.code === 'Enter') {
+          e.preventDefault();
+          onPress();
+        }
+      });
+
+      window.addEventListener('hashchange', () => {
+        const h = location.hash.slice(1);
+        if (h !== 'hardfill') {
+          clearTimeout(timeout);
+          timeout = null;
+          clickable = false;
+          waiting = false;
+          resetStage();
+        }
+      });
+    }
+  </script>
+</body>
+</html>
